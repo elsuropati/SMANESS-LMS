@@ -929,11 +929,20 @@ class Database {
 
   deleteStudent(studentId) {
     const data = this.read();
-    const idx = data.users.findIndex(u => u.id === studentId && u.role === 'student');
-    if (idx === -1) return false;
-    data.users.splice(idx, 1);
-    // also remove from students table if present
-    data.students = data.students.filter(s => s.user_id !== studentId && s.id !== studentId);
+    // studentId bisa berupa id dari data.students (std-xxx) ATAU id dari data.users (usr-xxx)
+    // Cek di tabel students dulu
+    const stdIdx = (data.students || []).findIndex(s => s.id === studentId || s.user_id === studentId);
+    let userId = studentId;
+    if (stdIdx !== -1) {
+      userId = data.students[stdIdx].user_id || studentId;
+      data.students.splice(stdIdx, 1);
+    }
+    // Hapus dari tabel users juga
+    const userIdx = data.users.findIndex(u => u.id === userId && u.role === 'student');
+    if (userIdx !== -1) {
+      data.users.splice(userIdx, 1);
+    }
+    if (stdIdx === -1 && userIdx === -1) return false;
     this.write(data);
     return true;
   }
