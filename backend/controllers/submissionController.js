@@ -3,8 +3,8 @@ const db = require('../database/db');
 class SubmissionController {
   getSubmissions(req, res) {
     try {
-      const { assignment_id } = req.query;
-      const submissions = db.getSubmissions({ assignment_id });
+      const { assignment_id, class_id } = req.query;
+      const submissions = db.getSubmissions({ assignment_id, class_id });
       return res.status(200).json({ success: true, data: submissions });
     } catch (err) {
       return res.status(500).json({ success: false, message: 'Gagal memuat pengumpulan tugas.' });

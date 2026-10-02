@@ -21,6 +21,33 @@ export async function renderGradingView(container, { user, showToast }) {
         </div>
       </div>
 
+      <!-- Filter Bar -->
+      <div class="content-panel" style="margin-bottom: 20px; padding: 14px 20px;">
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <label class="form-label" for="select-grading-class" style="margin: 0; font-weight: 700; white-space: nowrap;">
+              🏫 Filter Kelas:
+            </label>
+            <select id="select-grading-class" class="form-input" style="min-width: 200px; padding: 8px 12px; font-weight: 600;">
+              <option value="">Semua Kelas</option>
+            </select>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <label class="form-label" for="select-grading-status" style="margin: 0; font-weight: 700; white-space: nowrap;">
+              📑 Status:
+            </label>
+            <select id="select-grading-status" class="form-input" style="min-width: 160px; padding: 8px 12px;">
+              <option value="">Semua Status</option>
+              <option value="submitted">Perlu Dinilai</option>
+              <option value="graded">Sudah Dinilai</option>
+            </select>
+          </div>
+          <div style="margin-left: auto; color: var(--text-muted); font-size: 0.85rem;" id="grading-filtered-summary">
+            Memuat data...
+          </div>
+        </div>
+      </div>
+
       <!-- Submissions Table Panel -->
       <div class="content-panel">
         <div class="panel-header">
@@ -36,6 +63,8 @@ export async function renderGradingView(container, { user, showToast }) {
               <tr>
                 <th>Nama Siswa</th>
                 <th>NIS</th>
+                <th>Kelas</th>
+                <th>Tugas LKPD</th>
                 <th>Waktu Pengumpulan</th>
                 <th>Status</th>
                 <th>Nilai Final</th>
@@ -54,71 +83,107 @@ export async function renderGradingView(container, { user, showToast }) {
     <div id="grading-modal-slot"></div>
   `;
 
-  let submissions = [];
+  let allSubmissions = [];
+  let availableClasses = [];
 
-  async function loadSubmissions() {
-    const tbody = container.querySelector('#submissions-table-body');
-    const badge = container.querySelector('#grading-count-badge');
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">Memuat data pengumpulan tugas...</td></tr>`;
+  const classSelect = container.querySelector('#select-grading-class');
+  const statusSelect = container.querySelector('#select-grading-status');
+  const summaryEl = container.querySelector('#grading-filtered-summary');
+  const tbody = container.querySelector('#submissions-table-body');
+  const badge = container.querySelector('#grading-count-badge');
 
+  async function loadClasses() {
     try {
-      const res = await api.getSubmissions();
-      submissions = res.data || [];
-      badge.textContent = `${submissions.length} Pengumpulan`;
-
-      if (submissions.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">Belum ada pengumpulan tugas dari siswa.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = submissions.map(sub => {
-        let statusBadge = '<span class="badge-tag warning">Dikumpulkan</span>';
-        if (sub.status === 'graded') {
-          statusBadge = '<span class="badge-tag success">Dinilai</span>';
-        } else if (sub.status === 'draft') {
-          statusBadge = '<span class="badge-tag info">Draft (Mengerjakan)</span>';
-        }
-
-        return `
-          <tr>
-            <td>
-              <div style="font-weight: 700; color: var(--text-main);">${sub.student_name}</div>
-            </td>
-            <td><code>${sub.student_nis || '-'}</code></td>
-            <td>
-              <span style="font-size: 0.8rem; color: var(--text-muted);">
-                ${sub.submitted_at ? new Date(sub.submitted_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : 'Belum submit'}
-              </span>
-            </td>
-            <td>${statusBadge}</td>
-            <td>
-              <strong style="font-size: 1.05rem; color: ${sub.score !== null ? 'var(--primary)' : 'var(--text-muted)'};">
-                ${sub.score !== null ? sub.score : '—'}
-              </strong>
-            </td>
-            <td style="text-align: right;">
-              <button class="btn-demo-pill btn-review-sub" data-id="${sub.id}" style="font-weight: 600;">
-                🔍 Periksa & Nilai
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-
-      tbody.querySelectorAll('.btn-review-sub').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = btn.getAttribute('data-id');
-          openGradingModal(id);
-        });
-      });
-
-    } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="6" style="color: var(--danger); text-align: center;">Gagal: ${err.message}</td></tr>`;
+      const res = await api.getClasses();
+      availableClasses = res.data || [];
+      classSelect.innerHTML = `<option value="">Semua Kelas (${availableClasses.length})</option>` + 
+        availableClasses.map(c => `<option value="${c.id}">Kelas ${c.name} — ${c.subject}</option>`).join('');
+    } catch (e) {
+      console.error('Error loading classes for filter:', e);
     }
   }
 
+  function renderSubmissionsTable() {
+    const selectedClassId = classSelect.value;
+    const selectedStatus = statusSelect.value;
+
+    let filtered = allSubmissions.filter(sub => {
+      if (selectedClassId && sub.class_id !== selectedClassId) return false;
+      if (selectedStatus === 'submitted' && sub.status !== 'submitted') return false;
+      if (selectedStatus === 'graded' && sub.status !== 'graded') return false;
+      return true;
+    });
+
+    badge.textContent = `${filtered.length} Pengumpulan`;
+    summaryEl.textContent = `Menampilkan ${filtered.length} dari ${allSubmissions.length} pengumpulan`;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Tidak ada data pengumpulan tugas yang sesuai filter.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(sub => {
+      let statusBadge = '<span class="badge-tag warning">Dikumpulkan</span>';
+      if (sub.status === 'graded') {
+        statusBadge = '<span class="badge-tag success">Dinilai</span>';
+      } else if (sub.status === 'draft') {
+        statusBadge = '<span class="badge-tag info">Draft</span>';
+      }
+
+      return `
+        <tr>
+          <td>
+            <div style="font-weight: 700; color: var(--text-main);">${sub.student_name}</div>
+          </td>
+          <td><code>${sub.student_nis || '-'}</code></td>
+          <td><span class="badge-tag info">${sub.class_name || '-'}</span></td>
+          <td><strong style="color: var(--text-main);">${sub.assignment_title || 'Tugas LKPD'}</strong></td>
+          <td>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">
+              ${sub.submitted_at ? new Date(sub.submitted_at).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : 'Belum submit'}
+            </span>
+          </td>
+          <td>${statusBadge}</td>
+          <td>
+            <strong style="font-size: 1.05rem; color: ${sub.score !== null ? 'var(--primary)' : 'var(--text-muted)'};">
+              ${sub.score !== null ? sub.score : '—'}
+            </strong>
+          </td>
+          <td style="text-align: right;">
+            <button class="btn-demo-pill btn-review-sub" data-id="${sub.id}" style="font-weight: 600;">
+              🔍 Periksa & Nilai
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.querySelectorAll('.btn-review-sub').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        openGradingModal(id);
+      });
+    });
+  }
+
+  async function loadSubmissions() {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 20px;">Memuat data pengumpulan tugas...</td></tr>`;
+
+    try {
+      const res = await api.getSubmissions();
+      allSubmissions = res.data || [];
+      renderSubmissionsTable();
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="8" style="color: var(--danger); text-align: center;">Gagal: ${err.message}</td></tr>`;
+    }
+  }
+
+  classSelect.addEventListener('change', renderSubmissionsTable);
+  statusSelect.addEventListener('change', renderSubmissionsTable);
+
+
   function openGradingModal(subId) {
-    const sub = submissions.find(s => s.id === subId);
+    const sub = allSubmissions.find(s => s.id === subId);
     if (!sub) return;
 
     const slot = container.querySelector('#grading-modal-slot');
@@ -303,16 +368,101 @@ export async function renderGradingView(container, { user, showToast }) {
 
   container.querySelector('#btn-export-grades-excel').addEventListener('click', async () => {
     try {
-      showToast('Menyiapkan berkas Excel rekap nilai siswa...', 'info');
-      await api.exportGradesExcel();
-      showToast('Berkas Excel nilai berhasil diunduh!', 'success');
+      const selectedClassId = classSelect.value;
+      const selectedClass = availableClasses.find(c => c.id === selectedClassId);
+      const label = selectedClass ? `Kelas ${selectedClass.name}` : 'Semua Kelas';
+      showToast(`Menyiapkan berkas Excel nilai untuk ${label}...`, 'info');
+      await api.exportGradesExcel(selectedClassId);
+      showToast(`Berkas Excel nilai ${label} berhasil diunduh!`, 'success');
     } catch (err) {
       showToast(err.message, 'error');
     }
   });
 
   container.querySelector('#btn-print-grades').addEventListener('click', () => {
-    window.print();
+    const selectedClassId = classSelect.value;
+    const selectedClass = availableClasses.find(c => c.id === selectedClassId);
+    const label = selectedClass ? `Kelas ${selectedClass.name} — ${selectedClass.subject}` : 'Semua Kelas';
+
+    const selectedStatus = statusSelect.value;
+    let filtered = allSubmissions.filter(sub => {
+      if (selectedClassId && sub.class_id !== selectedClassId) return false;
+      if (selectedStatus === 'submitted' && sub.status !== 'submitted') return false;
+      if (selectedStatus === 'graded' && sub.status !== 'graded') return false;
+      return true;
+    });
+
+    const printWin = window.open('', '_blank');
+    if (!printWin) {
+      window.print();
+      return;
+    }
+
+    const tableRows = filtered.map((s, idx) => `
+      <tr>
+        <td style="border: 1px solid #333; padding: 6px; text-align: center;">${idx + 1}</td>
+        <td style="border: 1px solid #333; padding: 6px;">${s.student_nis || '-'}</td>
+        <td style="border: 1px solid #333; padding: 6px; font-weight: bold;">${s.student_name}</td>
+        <td style="border: 1px solid #333; padding: 6px;">${s.class_name || '-'}</td>
+        <td style="border: 1px solid #333; padding: 6px;">${s.assignment_title || 'Tugas LKPD'}</td>
+        <td style="border: 1px solid #333; padding: 6px; text-align: center; font-weight: bold;">${s.score !== null ? s.score : 'Belum Dinilai'}</td>
+        <td style="border: 1px solid #333; padding: 6px;">${s.score !== null && s.score >= 75 ? 'TUNTAS' : (s.score !== null ? 'REMEDIAL' : '-')}</td>
+        <td style="border: 1px solid #333; padding: 6px; font-size: 0.85em;">${s.feedback || '-'}</td>
+      </tr>
+    `).join('');
+
+    printWin.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Rekap Nilai — ${label}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 25px; color: #111; }
+          h2 { margin: 0 0 4px 0; text-align: center; }
+          h4 { margin: 0 0 16px 0; text-align: center; color: #555; }
+          .meta-info { margin-bottom: 16px; font-size: 0.9em; line-height: 1.6; }
+          table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.88em; }
+          th { background: #f0f0f0; border: 1px solid #333; padding: 8px; text-align: left; }
+          td { border: 1px solid #333; padding: 6px; }
+          @media print {
+            @page { margin: 12mm; }
+          }
+        </style>
+      </head>
+      <body>
+        <h2>AI CLASSROOM — REKAPITULASI NILAI SISWA</h2>
+        <h4>SMANESS LEARNING MANAGEMENT SYSTEM</h4>
+        <div class="meta-info">
+          <div><strong>Guru Pengampu:</strong> ${user.name} (${user.subject || 'Umum'})</div>
+          <div><strong>Filter Kelas:</strong> ${label}</div>
+          <div><strong>Tanggal Cetak:</strong> ${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}</div>
+          <div><strong>Total Data Ditampilkan:</strong> ${filtered.length} Siswa</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 35px; text-align: center;">No</th>
+              <th>NIS</th>
+              <th>Nama Siswa</th>
+              <th>Kelas</th>
+              <th>Tugas / LKPD</th>
+              <th style="width: 70px; text-align: center;">Nilai</th>
+              <th>Status</th>
+              <th>Umpan Balik Guru</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows || '<tr><td colspan="8" style="text-align:center; padding:16px;">Tidak ada data nilai siswa.</td></tr>'}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `);
+    printWin.document.close();
+    printWin.focus();
+    setTimeout(() => {
+      printWin.print();
+    }, 400);
   });
 
   container.querySelector('#btn-refresh-grading').addEventListener('click', () => {
@@ -320,5 +470,7 @@ export async function renderGradingView(container, { user, showToast }) {
     showToast('Daftar pengumpulan diperbarui', 'info');
   });
 
-  loadSubmissions();
+  await loadClasses();
+  await loadSubmissions();
 }
+

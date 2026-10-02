@@ -84,7 +84,13 @@ export const api = {
   createAssignment: (data) => apiRequest('/api/assignments', { method: 'POST', body: JSON.stringify(data) }),
 
   // Submissions
-  getSubmissions: (assignmentId) => apiRequest(`/api/submissions?assignment_id=${assignmentId || ''}`),
+  getSubmissions: (assignmentId = '', classId = '') => {
+    const params = new URLSearchParams();
+    if (assignmentId) params.append('assignment_id', assignmentId);
+    if (classId) params.append('class_id', classId);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    return apiRequest(`/api/submissions${qs}`);
+  },
   saveStudentDraft: (assignment_id, answers) => apiRequest('/api/submissions/save-draft', { method: 'POST', body: JSON.stringify({ assignment_id, answers }) }),
   submitAssignment: (assignment_id, answers) => apiRequest('/api/submissions/submit', { method: 'POST', body: JSON.stringify({ assignment_id, answers }) }),
 
@@ -105,17 +111,18 @@ export const api = {
   getAiConfig: () => apiRequest('/api/ai/config'),
   saveAiConfig: (config) => apiRequest('/api/ai/config', { method: 'POST', body: JSON.stringify(config) }),
 
-  exportGradesExcel: async () => {
+  exportGradesExcel: async (classId = '') => {
     const state = getState();
     const headers = {};
     if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
-    const res = await fetch('/api/grades/export-excel', { headers });
+    const query = classId ? `?class_id=${encodeURIComponent(classId)}` : '';
+    const res = await fetch(`/api/grades/export-excel${query}`, { headers });
     if (!res.ok) throw new Error('Gagal mengunduh file rekap nilai.');
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Rekap_Nilai_AI_Classroom_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `Rekap_Nilai_${classId ? 'Kelas' : 'Semua'}_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();

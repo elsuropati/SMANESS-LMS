@@ -288,6 +288,45 @@ class Database {
     }
   }
 
+  cleanupData(data) {
+    if (!data) return data;
+    const userIds = new Set((data.users || []).map(u => u.id));
+    const studentIds = new Set((data.students || []).map(s => s.id));
+    const studentUserIds = new Set((data.students || []).map(s => s.user_id).filter(Boolean));
+    const validStudentIds = new Set([...userIds, ...studentIds, ...studentUserIds]);
+
+    const classIds = new Set((data.classes || []).map(c => c.id));
+    const lkpdIds = new Set((data.lkpd || []).map(l => l.id));
+
+    // Bersihkan assignment yang LKPD atau Kelasnya sudah tidak ada
+    data.assignments = (data.assignments || []).filter(a => {
+      return classIds.has(a.class_id) && lkpdIds.has(a.lkpd_id);
+    });
+
+    const assignIds = new Set(data.assignments.map(a => a.id));
+
+    // Bersihkan submission yang tugasnya atau siswanya sudah dihapus
+    data.submissions = (data.submissions || []).filter(s => {
+      const hasAssign = assignIds.has(s.assignment_id);
+      const hasStudent = validStudentIds.has(s.student_id);
+      return hasAssign && hasStudent;
+    });
+
+    // Bersihkan followup yang tugas atau siswanya sudah dihapus
+    data.followups = (data.followups || []).filter(f => {
+      const hasStudent = validStudentIds.has(f.student_id);
+      const hasAssign = !f.assignment_id || assignIds.has(f.assignment_id);
+      return hasStudent && hasAssign;
+    });
+
+    // Update student_count di setiap kelas secara akurat
+    for (const cls of (data.classes || [])) {
+      cls.student_count = (data.students || []).filter(s => s.class_id === cls.id).length;
+    }
+
+    return data;
+  }
+
   read() {
     try {
       if (!fs.existsSync(DB_PATH)) {
@@ -295,7 +334,8 @@ class Database {
         return INITIAL_DATA;
       }
       const raw = fs.readFileSync(DB_PATH, 'utf8');
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      return this.cleanupData(parsed);
     } catch (err) {
       console.error('Error reading database file:', err);
       return INITIAL_DATA;
@@ -304,7 +344,8 @@ class Database {
 
   write(data) {
     try {
-      fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf8');
+      const clean = this.cleanupData(data);
+      fs.writeFileSync(DB_PATH, JSON.stringify(clean, null, 2), 'utf8');
       return true;
     } catch (err) {
       console.error('Error writing database file:', err);
@@ -413,7 +454,7 @@ class Database {
   // Classes CRUD
   getClasses(teacherId) {
     const data = this.read();
-    return data.classes.filter(c => c.teacher_id === teacherId);
+    return (data.classes || []).filter(c => c.status === 'active');
   }
 
   getClassById(classId) {
@@ -543,7 +584,7 @@ class Database {
   // LKPD CRUD
   getLkpdList(teacherId) {
     const data = this.read();
-    return data.lkpd.filter(l => l.teacher_id === teacherId);
+    return data.lkpd || [];
   }
 
   getLkpdById(id) {
@@ -593,7 +634,7 @@ class Database {
   // Assignments CRUD
   getAssignments(teacherId) {
     const data = this.read();
-    return data.assignments.filter(a => a.teacher_id === teacherId);
+    return (data.assignments || []).filter(a => a.status === 'active');
   }
 
   getAssignmentsForStudent(studentUserId) {
@@ -645,11 +686,30 @@ class Database {
   // Submissions CRUD
   getSubmissions(filter = {}) {
     const data = this.read();
-    return data.submissions.filter(s => {
-      if (filter.assignment_id && s.assignment_id !== filter.assignment_id) return false;
-      if (filter.student_id && s.student_id !== filter.student_id) return false;
-      return true;
-    });
+    return (data.submissions || [])
+      .filter(s => {
+        const assign = (data.assignments || []).find(a => a.id === s.assignment_id);
+        if (!assign) return false;
+        if (filter.assignment_id && s.assignment_id !== filter.assignment_id) return false;
+        if (filter.student_id && s.student_id !== filter.student_id) return false;
+        if (filter.class_id && assign.class_id !== filter.class_id) return false;
+        return true;
+      })
+      .map(s => {
+        const assign = (data.assignments || []).find(a => a.id === s.assignment_id) || {};
+        const studentUser = (data.users || []).find(u => u.id === s.student_id);
+        const studentRecord = (data.students || []).find(st => st.id === s.student_id || st.user_id === s.student_id);
+        const classId = assign.class_id || (studentUser ? studentUser.class_id : (studentRecord ? studentRecord.class_id : ''));
+        const cls = (data.classes || []).find(c => c.id === classId);
+        return {
+          ...s,
+          student_name: s.student_name || (studentUser ? studentUser.name : (studentRecord ? studentRecord.name : 'Siswa')),
+          student_nis: s.student_nis || (studentUser ? studentUser.nip_or_nis : (studentRecord ? studentRecord.nis : '-')),
+          assignment_title: assign.title || 'Tugas LKPD',
+          class_id: classId,
+          class_name: cls ? cls.name : (assign.class_name || 'Umum')
+        };
+      });
   }
 
   getSubmissionById(id) {
@@ -938,12 +998,17 @@ class Database {
       userId = data.students[stdIdx].user_id || studentId;
       data.students.splice(stdIdx, 1);
     }
-    // Hapus dari tabel users juga
-    const userIdx = data.users.findIndex(u => u.id === userId && u.role === 'student');
+    // Hapus dari tabel users juga (coba dengan userId dan studentId asli)
+    const userIdx = data.users.findIndex(u => (u.id === userId || u.id === studentId) && u.role === 'student');
     if (userIdx !== -1) {
       data.users.splice(userIdx, 1);
     }
     if (stdIdx === -1 && userIdx === -1) return false;
+
+    // Bersihkan juga riwayat pengumpulan tugas dan tindak lanjut siswa ini
+    data.submissions = (data.submissions || []).filter(s => s.student_id !== userId && s.student_id !== studentId);
+    data.followups = (data.followups || []).filter(f => f.student_id !== userId && f.student_id !== studentId);
+
     this.write(data);
     return true;
   }

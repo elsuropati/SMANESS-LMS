@@ -296,13 +296,14 @@ async function runTests() {
     assert.strictEqual(listRes.status, 200);
     assert.ok(Array.isArray(listRes.body.data));
 
+    const testEmail = 'rinawijaya_' + Date.now().toString(36) + '@aiclassroom.sch.id';
     const createRes = await request(app, {
       path: '/api/admin/teachers',
       method: 'POST',
       headers: { 'Authorization': `Bearer ${adminToken}` }
     }, {
       name: 'Rina Wijaya, S.Pd.',
-      email: 'rinawijaya@aiclassroom.sch.id',
+      email: testEmail,
       nip: '199001012015012001',
       subject: 'Fisika',
       password: 'password123'
@@ -312,7 +313,7 @@ async function runTests() {
 
     // Verify new teacher can log in immediately
     const loginRes = await request(app, { path: '/api/auth/login', method: 'POST' }, {
-      email: 'rinawijaya@aiclassroom.sch.id',
+      email: testEmail,
       password: 'password123'
     });
     assert.strictEqual(loginRes.status, 200);
