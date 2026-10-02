@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: ai-classroom
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SHOW_DEMO_ACCOUNTS
+        value: false
+      - key: MOCK_AI
+        value: false
+      - key: JWT_SECRET
+        generateValue: true
