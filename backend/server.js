@@ -75,7 +75,7 @@ app.get('*', (req, res) => {
 app.use(errorHandler);
 
 // Start server
-if (process.env.NODE_ENV !== 'test') {
+if (require.main === module) {
   app.listen(config.port, () => {
     console.log(`=========================================`);
     console.log(`🚀 AI CLASSROOM Server is running!`);
