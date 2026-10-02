@@ -21,7 +21,8 @@
       "nip_or_nis": "198507122010011005",
       "subject": "Kimia",
       "avatar": "BS",
-      "created_at": "2026-09-01T08:00:00Z"
+      "created_at": "2026-09-01T08:00:00Z",
+      "status": "inactive"
     },
     {
       "id": "usr-student-1",
