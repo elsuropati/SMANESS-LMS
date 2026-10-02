@@ -27,18 +27,18 @@ class GeminiAdapter {
   async listModels() {
     if (this.mock || !this.apiKey) {
       return [
-        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Cepat & Direkomendasikan)' },
-        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Generasi Terbaru)' },
-        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Penalaran Mendalam)' }
+        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Cepat & Direkomendasikan)', available: true },
+        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Generasi Terbaru)', available: true },
+        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Penalaran Mendalam)', available: true }
       ];
     }
 
     try {
-      const url = `${this.endpoint.replace(/\/$/, '')}/v1beta/models?key=${this.apiKey}`;
+      const baseUrl = this.endpoint.replace(/\/$/, '');
+      const url = `${baseUrl}/v1beta/models?key=${this.apiKey}`;
       const res = await fetch(url, {
-        headers: {
-          'x-goog-api-key': this.apiKey
-        }
+        headers: { 'x-goog-api-key': this.apiKey },
+        signal: AbortSignal.timeout(8000)
       });
 
       if (!res.ok) {
@@ -47,7 +47,7 @@ class GeminiAdapter {
       }
 
       const data = await res.json();
-      const models = (data.models || [])
+      const candidates = (data.models || [])
         .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
         .map(m => {
           const id = m.name.replace(/^models\//, '');
@@ -58,10 +58,44 @@ class GeminiAdapter {
           };
         });
 
-      return models.length > 0 ? models : [
-        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
-        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' }
-      ];
+      if (candidates.length === 0) {
+        return [
+          { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash', available: true },
+          { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', available: true }
+        ];
+      }
+
+      // Test setiap model secara paralel dengan pesan minimal
+      const testResults = await Promise.allSettled(
+        candidates.map(async (m) => {
+          const testUrl = `${baseUrl}/v1beta/models/${m.id}:generateContent?key=${this.apiKey}`;
+          try {
+            const testRes = await fetch(testUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-goog-api-key': this.apiKey
+              },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: 'Hi' }] }],
+                generationConfig: { maxOutputTokens: 1 }
+              }),
+              signal: AbortSignal.timeout(6000)
+            });
+            if (testRes.ok) {
+              return { ...m, available: true, error: null };
+            } else {
+              const errData = await testRes.json().catch(() => ({}));
+              const errMsg = errData.error?.message || `HTTP ${testRes.status}`;
+              return { ...m, available: false, error: errMsg };
+            }
+          } catch (e) {
+            return { ...m, available: false, error: e.message };
+          }
+        })
+      );
+
+      return testResults.map(r => r.status === 'fulfilled' ? r.value : { ...r.reason, available: false });
     } catch (err) {
       throw new Error(`Gagal memuat model Gemini dari API: ${err.message}`);
     }

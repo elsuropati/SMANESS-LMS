@@ -188,10 +188,16 @@ export async function renderAiSettingsView(container, { user, showToast }) {
     }
   });
 
-  // Ambil model langsung dari API
+  // Ambil model langsung dari API (dengan test availability)
   fetchModelsBtn.addEventListener('click', async () => {
     fetchModelsBtn.disabled = true;
-    fetchModelsBtn.textContent = 'Memuat Model...';
+    fetchModelsBtn.textContent = '⏳ Menguji Model...';
+
+    // Tampilkan progress di help text
+    const modelHelp = container.querySelector('#help-ai-model');
+    const origHelpText = modelHelp.textContent;
+    modelHelp.innerHTML = '<span style="color:#2563eb;">⏳ Mengambil daftar model dan menguji setiap model... Mohon tunggu.</span>';
+
     try {
       const res = await api.getAiModels({
         provider: providerSelect.value,
@@ -201,16 +207,34 @@ export async function renderAiSettingsView(container, { user, showToast }) {
 
       const models = res.data || [];
       if (models.length > 0) {
-        modelsDatalist.innerHTML = models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
-        const hasCurrent = models.some(m => m.id === modelInput.value);
-        if (!hasCurrent && models[0]) {
-          modelInput.value = models[0].id;
+        const available = models.filter(m => m.available !== false);
+        const unavailable = models.filter(m => m.available === false);
+
+        // Isi datalist hanya model yang tersedia
+        modelsDatalist.innerHTML = [
+          ...available.map(m => `<option value="${m.id}">✅ ${m.name}</option>`),
+          ...unavailable.map(m => `<option value="${m.id}" disabled>❌ ${m.name} — ${m.error || 'Tidak tersedia'}</option>`)
+        ].join('');
+
+        // Auto-select model pertama yang lolos test
+        const hasCurrent = available.some(m => m.id === modelInput.value);
+        if (!hasCurrent && available[0]) {
+          modelInput.value = available[0].id;
         }
-        showToast(`Berhasil menarik ${models.length} model resmi dari API!`, 'success');
+
+        // Ringkasan status
+        const summaryParts = [];
+        if (available.length > 0) summaryParts.push(`<span style="color:#16a34a;">✅ ${available.length} model siap pakai</span>`);
+        if (unavailable.length > 0) summaryParts.push(`<span style="color:#dc2626;">❌ ${unavailable.length} tidak tersedia</span>`);
+        modelHelp.innerHTML = summaryParts.join(' &nbsp;|&nbsp; ');
+
+        showToast(`${available.length} dari ${models.length} model siap dipakai.`, available.length > 0 ? 'success' : 'error');
       } else {
+        modelHelp.textContent = origHelpText;
         showToast('Tidak ada model yang ditemukan.', 'info');
       }
     } catch (err) {
+      modelHelp.textContent = origHelpText;
       showToast(err.message || 'Gagal memuat model dari API.', 'error');
     } finally {
       fetchModelsBtn.disabled = false;
