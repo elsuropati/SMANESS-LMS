@@ -1,6 +1,6 @@
 {
   "name": "ai-classroom",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI CLASSROOM - Modern AI-Powered Learning Management System",
   "main": "backend/server.js",
   "type": "commonjs",
