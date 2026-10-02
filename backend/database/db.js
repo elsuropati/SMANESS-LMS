@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const cloudAdapter = require('./cloudAdapter');
 
 const isServerless = Boolean(process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.VERCEL);
 const DB_PATH = isServerless 
@@ -272,7 +273,38 @@ const INITIAL_DATA = {
 
 class Database {
   constructor() {
+    this.memoryData = null;
     this.init();
+  }
+
+  hasCloud() {
+    return cloudAdapter.isConfigured();
+  }
+
+  isDirty() {
+    return cloudAdapter.isDirty;
+  }
+
+  getCloudProviderName() {
+    return cloudAdapter.getProviderName();
+  }
+
+  async pullFromCloud() {
+    if (cloudAdapter.isConfigured()) {
+      const data = await cloudAdapter.pull(INITIAL_DATA);
+      if (data) {
+        this.memoryData = this.cleanupData(data);
+        try {
+          fs.writeFileSync(DB_PATH, JSON.stringify(this.memoryData, null, 2), 'utf8');
+        } catch (e) {}
+      }
+    }
+  }
+
+  async pushToCloud() {
+    if (cloudAdapter.isConfigured() && this.memoryData) {
+      await cloudAdapter.push(this.memoryData);
+    }
   }
 
   init() {
@@ -354,6 +386,9 @@ class Database {
   }
 
   read() {
+    if (this.memoryData) {
+      return this.memoryData;
+    }
     try {
       if (!fs.existsSync(DB_PATH)) {
         const seedFile = path.join(__dirname, 'data.json');
@@ -365,7 +400,9 @@ class Database {
         }
       }
       const raw = fs.readFileSync(DB_PATH, 'utf8');
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      this.memoryData = parsed;
+      return parsed;
     } catch (err) {
       console.error('Error reading database file:', err);
       return INITIAL_DATA;
@@ -375,6 +412,8 @@ class Database {
   write(data) {
     try {
       const clean = this.cleanupData(data);
+      this.memoryData = clean;
+      cloudAdapter.isDirty = true;
       fs.writeFileSync(DB_PATH, JSON.stringify(clean, null, 2), 'utf8');
       return true;
     } catch (err) {

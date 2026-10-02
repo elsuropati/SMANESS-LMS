@@ -26,6 +26,31 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Sync with Cloud Database (if configured via env)
+const db = require('./database/db');
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api') && db.hasCloud()) {
+    try {
+      await db.pullFromCloud();
+    } catch (e) {
+      console.error('Cloud pull error:', e.message);
+    }
+
+    const originalJson = res.json.bind(res);
+    res.json = async function (data) {
+      if (db.isDirty() && db.hasCloud()) {
+        try {
+          await db.pushToCloud();
+        } catch (e) {
+          console.error('Cloud push error:', e.message);
+        }
+      }
+      return originalJson(data);
+    };
+  }
+  next();
+});
+
 // Static frontend
 const frontendPath = path.join(__dirname, '../frontend');
 app.use(express.static(frontendPath));
@@ -59,7 +84,9 @@ app.get('/api/system/info', (req, res) => {
     app: 'AI CLASSROOM',
     version: '1.0.0',
     nodeEnv: config.nodeEnv,
-    showDemoAccounts: config.showDemoAccounts
+    showDemoAccounts: config.showDemoAccounts,
+    cloudDb: db.getCloudProviderName(),
+    isCloudConnected: db.hasCloud()
   });
 });
 
