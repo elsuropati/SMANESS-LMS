@@ -20,6 +20,53 @@ class GeminiAdapter {
     return cleaned.trim();
   }
 
+  getCleanModelName() {
+    return (this.model || 'gemini-1.5-flash').replace(/^models\//, '');
+  }
+
+  async listModels() {
+    if (this.mock || !this.apiKey) {
+      return [
+        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (Cepat & Direkomendasikan)' },
+        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (Generasi Terbaru)' },
+        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (Penalaran Mendalam)' }
+      ];
+    }
+
+    try {
+      const url = `${this.endpoint.replace(/\/$/, '')}/v1beta/models?key=${this.apiKey}`;
+      const res = await fetch(url, {
+        headers: {
+          'x-goog-api-key': this.apiKey
+        }
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `HTTP ${res.status}: Gagal memuat model Gemini.`);
+      }
+
+      const data = await res.json();
+      const models = (data.models || [])
+        .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+        .map(m => {
+          const id = m.name.replace(/^models\//, '');
+          return {
+            id,
+            name: `${m.displayName || id} (${id})`,
+            description: m.description || ''
+          };
+        });
+
+      return models.length > 0 ? models : [
+        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
+        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' }
+      ];
+    } catch (err) {
+      throw new Error(`Gagal memuat model Gemini dari API: ${err.message}`);
+    }
+  }
+
   async testConnection() {
     if (this.mock || !this.apiKey) {
       return { 
@@ -29,10 +76,14 @@ class GeminiAdapter {
     }
 
     try {
-      const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+      const cleanModel = this.getCleanModelName();
+      const url = `${this.endpoint.replace(/\/$/, '')}/v1beta/models/${cleanModel}:generateContent?key=${this.apiKey}`;
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-goog-api-key': this.apiKey
+        },
         body: JSON.stringify({
           contents: [{ parts: [{ text: 'Ping test connection. Jawab satu kata: OK' }] }]
         })
@@ -43,7 +94,7 @@ class GeminiAdapter {
         throw new Error(errorData.error?.message || `HTTP ${res.status}: Gagal terhubung ke Gemini API.`);
       }
 
-      return { success: true, message: `Berhasil terhubung ke Google Gemini API Live (${this.model}).` };
+      return { success: true, message: `Berhasil terhubung ke Google Gemini API Live (${cleanModel}).` };
     } catch (err) {
       throw new Error(`Koneksi Gemini gagal: ${err.message}`);
     }
@@ -54,10 +105,14 @@ class GeminiAdapter {
       return `[Asisten AI - Mode Standar]\nBerdasarkan topik yang Anda berikan, berikut adalah rekomendasi perencanaan materi dan panduan pedagogis:\n\n1. Rancang apersepsi berbasis fenomena nyata.\n2. Berikan pertanyaan pemantik HOTS.\n3. Lakukan penilaian formatif terpadu.\n\n(Tip: Pasang GEMINI_API_KEY di Netlify untuk jawaban AI langsung)`;
     }
 
-    const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const cleanModel = this.getCleanModelName();
+    const url = `${this.endpoint.replace(/\/$/, '')}/v1beta/models/${cleanModel}:generateContent?key=${this.apiKey}`;
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-goog-api-key': this.apiKey
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
@@ -128,10 +183,14 @@ Format JSON harus persis:
 }`;
 
     const fullPrompt = `${systemInstruction}\n\nInstruksi Guru:\n${prompt}`;
-    const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const cleanModel = this.getCleanModelName();
+    const url = `${this.endpoint.replace(/\/$/, '')}/v1beta/models/${cleanModel}:generateContent?key=${this.apiKey}`;
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-goog-api-key': this.apiKey
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: fullPrompt }] }],
         generationConfig: {
@@ -143,7 +202,7 @@ Format JSON harus persis:
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(`Google Gemini API (${this.model}): ${err.error?.message || 'HTTP ' + res.status}`);
+      throw new Error(`Google Gemini API (${cleanModel}): ${err.error?.message || 'HTTP ' + res.status}`);
     }
 
     const data = await res.json();
@@ -198,10 +257,14 @@ ${options.learningObjectives ? JSON.stringify(options.learningObjectives) : 'Pen
 
 Hasilkan JSON evaluasi:`;
 
-    const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const cleanEvalModel = this.getCleanModelName();
+    const url = `${this.endpoint.replace(/\/$/, '')}/v1beta/models/${cleanEvalModel}:generateContent?key=${this.apiKey}`;
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-goog-api-key': this.apiKey
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {

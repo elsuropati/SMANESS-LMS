@@ -12,6 +12,20 @@ class AiController {
     }
   }
 
+  async listModels(req, res) {
+    try {
+      const activeConfig = db.getActiveAiConfig(req.user.id);
+      const config = {
+        ...(activeConfig || {}),
+        ...req.body
+      };
+      const models = await aiService.listModels(config);
+      return res.status(200).json({ success: true, data: models });
+    } catch (err) {
+      return res.status(400).json({ success: false, message: err.message || 'Gagal memuat model dari API.' });
+    }
+  }
+
   async generateLkpd(req, res) {
     try {
       const { subject, grade, topic, activities_count, difficulty, learning_model } = req.body;

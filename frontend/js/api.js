@@ -105,6 +105,7 @@ export const api = {
 
   // AI Services
   testAiConnection: (config) => apiRequest('/api/ai/test', { method: 'POST', body: JSON.stringify(config || {}) }),
+  getAiModels: (data) => apiRequest('/api/ai/models', { method: 'POST', body: JSON.stringify(data || {}) }),
   generateLkpd: (data) => apiRequest('/api/ai/generate-lkpd', { method: 'POST', body: JSON.stringify(data) }),
   evaluateSubmission: (data) => apiRequest('/api/ai/evaluate', { method: 'POST', body: JSON.stringify(data) }),
   sendAiChat: (data) => apiRequest('/api/ai/chat', { method: 'POST', body: JSON.stringify(data) }),

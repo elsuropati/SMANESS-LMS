@@ -28,6 +28,23 @@ class OpenAICompatibleAdapter {
     return headers;
   }
 
+  async listModels() {
+    if (this.mock || !this.apiKey) {
+      return [
+        { id: this.model || 'gpt-4o-mini', name: this.model || 'gpt-4o-mini' }
+      ];
+    }
+    try {
+      const url = `${this.endpoint.replace(/\/$/, '')}/models`;
+      const res = await fetch(url, { headers: this.getHeaders() });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      return (data.data || []).map(m => ({ id: m.id, name: m.id }));
+    } catch (e) {
+      return [{ id: this.model || 'gpt-4o-mini', name: this.model || 'gpt-4o-mini' }];
+    }
+  }
+
   async testConnection() {
     if (this.mock) {
       return { success: true, message: `Koneksi ke endpoint (${this.endpoint}) diverifikasi (Mock Mode Aktif).` };

@@ -38,6 +38,14 @@ class AiService {
     }
   }
 
+  async listModels(providerConfig) {
+    const adapter = this.getAdapter(providerConfig);
+    if (typeof adapter.listModels === 'function') {
+      return await adapter.listModels();
+    }
+    return [];
+  }
+
   async testConnection(providerConfig) {
     const adapter = this.getAdapter(providerConfig);
     return await adapter.testConnection();

@@ -62,15 +62,29 @@ export async function renderAiSettingsView(container, { user, showToast }) {
 
           <!-- Model Name -->
           <div class="form-group">
-            <label class="form-label" for="input-ai-model">Nama Model AI *</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="form-label" for="input-ai-model" style="margin-bottom: 0;">Nama Model AI *</label>
+              <button type="button" class="btn-demo-pill" id="btn-fetch-models" style="font-size: 0.75rem; padding: 4px 10px; background: #f8fafc; border-color: #cbd5e1; cursor: pointer;">
+                🔄 Ambil Model dari API
+              </button>
+            </div>
             <input 
               type="text" 
               id="input-ai-model" 
               class="form-input" 
-              value="gemini-1.5-pro" 
-              placeholder="Contoh: gemini-1.5-pro, gpt-4o, llama3" 
+              list="ai-models-datalist"
+              value="gemini-1.5-flash" 
+              placeholder="Contoh: gemini-1.5-flash, gemini-2.0-flash, gpt-4o-mini" 
               required
             />
+            <datalist id="ai-models-datalist">
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash (Cepat & Direkomendasikan)</option>
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Generasi Terbaru)</option>
+              <option value="gemini-1.5-pro">Gemini 1.5 Pro (Penalaran Mendalam)</option>
+            </datalist>
+            <span class="activity-desc" id="help-ai-model" style="display: block; margin-top: 4px; color: var(--text-muted);">
+              Ketik nama model atau klik "🔄 Ambil Model dari API" untuk menarik daftar model resmi dari akun API Anda.
+            </span>
           </div>
 
           <!-- API Key -->
@@ -115,6 +129,8 @@ export async function renderAiSettingsView(container, { user, showToast }) {
   const keyToggleBtn = container.querySelector('#btn-toggle-key-visibility');
   const statusPill = container.querySelector('#ai-conn-status-pill');
   const testBtn = container.querySelector('#btn-test-connection');
+  const fetchModelsBtn = container.querySelector('#btn-fetch-models');
+  const modelsDatalist = container.querySelector('#ai-models-datalist');
   const form = container.querySelector('#form-ai-settings');
 
   // Toggle key visibility
@@ -132,12 +148,12 @@ export async function renderAiSettingsView(container, { user, showToast }) {
   const PROVIDER_PRESETS = {
     gemini: {
       endpoint: 'https://generativelanguage.googleapis.com',
-      model: 'gemini-1.5-pro',
+      model: 'gemini-1.5-flash',
       help: 'Endpoint Google AI Studio / Gemini API'
     },
     openai: {
       endpoint: 'https://api.openai.com/v1',
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       help: 'Endpoint resmi OpenAI'
     },
     anthropic: {
@@ -147,7 +163,7 @@ export async function renderAiSettingsView(container, { user, showToast }) {
     },
     openrouter: {
       endpoint: 'https://openrouter.ai/api/v1',
-      model: 'google/gemini-pro-1.5',
+      model: 'google/gemini-flash-1.5',
       help: 'OpenRouter Multi-Provider Aggregator'
     },
     ollama: {
@@ -169,6 +185,36 @@ export async function renderAiSettingsView(container, { user, showToast }) {
       endpointInput.value = preset.endpoint;
       modelInput.value = preset.model;
       endpointHelp.textContent = preset.help;
+    }
+  });
+
+  // Ambil model langsung dari API
+  fetchModelsBtn.addEventListener('click', async () => {
+    fetchModelsBtn.disabled = true;
+    fetchModelsBtn.textContent = 'Memuat Model...';
+    try {
+      const res = await api.getAiModels({
+        provider: providerSelect.value,
+        endpoint: endpointInput.value.trim(),
+        api_key: keyInput.value.trim()
+      });
+
+      const models = res.data || [];
+      if (models.length > 0) {
+        modelsDatalist.innerHTML = models.map(m => `<option value="${m.id}">${m.name}</option>`).join('');
+        const hasCurrent = models.some(m => m.id === modelInput.value);
+        if (!hasCurrent && models[0]) {
+          modelInput.value = models[0].id;
+        }
+        showToast(`Berhasil menarik ${models.length} model resmi dari API!`, 'success');
+      } else {
+        showToast('Tidak ada model yang ditemukan.', 'info');
+      }
+    } catch (err) {
+      showToast(err.message || 'Gagal memuat model dari API.', 'error');
+    } finally {
+      fetchModelsBtn.disabled = false;
+      fetchModelsBtn.textContent = '🔄 Ambil Model dari API';
     }
   });
 

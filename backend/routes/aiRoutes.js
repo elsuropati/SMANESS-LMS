@@ -6,6 +6,7 @@ const { authenticateToken, requireRole } = require('../middleware/authMiddleware
 router.use(authenticateToken);
 
 router.post('/test', requireRole('teacher'), aiController.testConnection);
+router.post('/models', requireRole('teacher'), aiController.listModels);
 router.post('/generate-lkpd', requireRole('teacher'), aiController.generateLkpd);
 router.post('/evaluate', requireRole('teacher'), aiController.evaluateSubmission);
 router.post('/chat', requireRole('teacher'), aiController.chat);
