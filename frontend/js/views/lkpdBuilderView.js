@@ -254,10 +254,29 @@ export async function renderLkpdBuilderView(container, { user, showToast }) {
           const title = btn.getAttribute('data-title');
           if (confirm(`⚠️ Hapus permanen LKPD "${title}"?\n\nAksi ini tidak dapat dibatalkan.`)) {
             try {
+              btn.disabled = true;
+              btn.textContent = 'Menghapus...';
               await api.deleteLkpd(id);
               showToast(`LKPD "${title}" berhasil dihapus.`, 'success');
-              loadLkpdList();
+
+              // Tutup editor jika LKPD yang dihapus sedang dibuka di form editor
+              const editorIdInput = container.querySelector('#editor-lkpd-id');
+              if (editorIdInput && editorIdInput.value === id) {
+                container.querySelector('#lkpd-editor-workspace').style.display = 'none';
+                container.querySelector('#form-lkpd-editor')?.reset();
+                editorIdInput.value = '';
+                currentEditingLkpd = null;
+              }
+
+              // Hapus kartu langsung dari DOM
+              const card = btn.closest('.task-item-card');
+              if (card) card.remove();
+
+              // Muat ulang daftar dari server
+              await loadLkpdList();
             } catch (e) {
+              btn.disabled = false;
+              btn.textContent = '🗑️ Hapus';
               showToast(e.message, 'error');
             }
           }

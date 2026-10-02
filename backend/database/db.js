@@ -289,6 +289,10 @@ class Database {
     return cloudAdapter.getProviderName();
   }
 
+  getLastPullTime() {
+    return cloudAdapter.lastPull || 0;
+  }
+
   async pullFromCloud() {
     if (!cloudAdapter.isConfigured()) return;
 

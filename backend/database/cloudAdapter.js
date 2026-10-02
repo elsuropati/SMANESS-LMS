@@ -61,27 +61,47 @@ class CloudAdapter {
 
     try {
       if (this.provider === 'upstash') {
-        const res = await fetch(`${this.upstashUrl}/get/classroom_data`, {
-          headers: { Authorization: `Bearer ${this.upstashToken}` }
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch(`${this.upstashUrl}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.upstashToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(['GET', 'classroom_data']),
+          signal: controller.signal
         });
+        clearTimeout(timeout);
+
         if (!res.ok) {
           console.error('[Upstash] HTTP Error:', res.status, res.statusText);
           return null;
         }
+
         const json = await res.json();
         if (json && json.result) {
-          const parsed = typeof json.result === 'string' ? JSON.parse(json.result) : json.result;
-          this.cache = parsed;
-          this.lastPull = Date.now();
-          return parsed;
-        } else {
-          // Inisialisasi awal ke cloud jika masih kosong
-          console.log('🌱 [Upstash] Seeding initial data to Upstash Redis...');
-          await this.push(defaultData);
-          this.cache = defaultData;
-          this.lastPull = Date.now();
-          return defaultData;
+          let parsed = json.result;
+          while (typeof parsed === 'string') {
+            try {
+              parsed = JSON.parse(parsed);
+            } catch (e) {
+              break;
+            }
+          }
+          if (parsed && typeof parsed === 'object' && Array.isArray(parsed.users)) {
+            this.cache = parsed;
+            this.lastPull = Date.now();
+            return parsed;
+          }
         }
+
+        // Jika belum ada data di Upstash, seed sekarang
+        console.log('🌱 [Upstash] Seeding initial data to Upstash Redis...');
+        await this.push(defaultData);
+        this.cache = defaultData;
+        this.lastPull = Date.now();
+        return defaultData;
       }
 
       if (this.provider === 'mongodb') {
@@ -127,21 +147,26 @@ class CloudAdapter {
 
     try {
       if (this.provider === 'upstash') {
-        const payload = JSON.stringify(data);
-        const res = await fetch(`${this.upstashUrl}/set/classroom_data`, {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch(`${this.upstashUrl}`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${this.upstashToken}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(['SET', 'classroom_data', JSON.stringify(data)]),
+          signal: controller.signal
         });
+        clearTimeout(timeout);
+
         if (res.ok) {
           this.isDirty = false;
           this.cache = data;
+          this.lastPull = Date.now();
           return true;
         } else {
-          console.error('[Upstash Push Failed]:', res.status);
+          console.error('[Upstash Push Failed]: HTTP', res.status);
         }
       }
 

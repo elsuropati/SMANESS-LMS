@@ -29,20 +29,21 @@ app.use(cookieParser());
 // Sync with Cloud Database (if configured via env)
 const db = require('./database/db');
 
-// Pull dari cloud hanya 1x saat cold start (memoryData masih kosong)
-// Setelah itu, data tersimpan di memory dan push ke cloud tiap ada perubahan
-let cloudInitialized = false;
+// Pull dari cloud jika data belum di memory, atau request modifikasi, atau cache > 2.5 detik
 app.use(async (req, res, next) => {
-  if (req.path.startsWith('/api') && db.hasCloud() && !cloudInitialized) {
-    try {
-      await db.pullFromCloud();
-      cloudInitialized = true;
-    } catch (e) {
-      console.error('Cloud pull error:', e.message);
+  if (req.path.startsWith('/api') && db.hasCloud()) {
+    const isWrite = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method);
+    const cacheAge = Date.now() - db.getLastPullTime();
+    if (!db.memoryData || isWrite || cacheAge > 2500) {
+      try {
+        await db.pullFromCloud();
+      } catch (e) {
+        console.error('Cloud pull error:', e.message);
+      }
     }
   }
 
-  // Intercept res.json: setelah tiap write, push perubahan ke cloud
+  // Intercept res.json: setelah tiap write, push perubahan ke cloud sebelum respon dikirim
   if (req.path.startsWith('/api') && db.hasCloud()) {
     const originalJson = res.json.bind(res);
     res.json = async function (data) {
