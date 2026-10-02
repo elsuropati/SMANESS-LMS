@@ -290,14 +290,23 @@ class Database {
   }
 
   async pullFromCloud() {
-    if (cloudAdapter.isConfigured()) {
-      const data = await cloudAdapter.pull(INITIAL_DATA);
-      if (data) {
-        this.memoryData = this.cleanupData(data);
-        try {
-          fs.writeFileSync(DB_PATH, JSON.stringify(this.memoryData, null, 2), 'utf8');
-        } catch (e) {}
+    if (!cloudAdapter.isConfigured()) return;
+
+    // Baca data seed dari data.json untuk dipakai jika cloud masih kosong
+    let seedData = INITIAL_DATA;
+    try {
+      const seedFile = path.join(__dirname, 'data.json');
+      if (fs.existsSync(seedFile)) {
+        seedData = JSON.parse(fs.readFileSync(seedFile, 'utf8'));
       }
+    } catch (e) {}
+
+    const data = await cloudAdapter.pull(seedData);
+    if (data) {
+      this.memoryData = this.cleanupData(data);
+      try {
+        fs.writeFileSync(DB_PATH, JSON.stringify(this.memoryData, null, 2), 'utf8');
+      } catch (e) {}
     }
   }
 

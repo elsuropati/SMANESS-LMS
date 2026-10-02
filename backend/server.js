@@ -28,14 +28,22 @@ app.use(cookieParser());
 
 // Sync with Cloud Database (if configured via env)
 const db = require('./database/db');
+
+// Pull dari cloud hanya 1x saat cold start (memoryData masih kosong)
+// Setelah itu, data tersimpan di memory dan push ke cloud tiap ada perubahan
+let cloudInitialized = false;
 app.use(async (req, res, next) => {
-  if (req.path.startsWith('/api') && db.hasCloud()) {
+  if (req.path.startsWith('/api') && db.hasCloud() && !cloudInitialized) {
     try {
       await db.pullFromCloud();
+      cloudInitialized = true;
     } catch (e) {
       console.error('Cloud pull error:', e.message);
     }
+  }
 
+  // Intercept res.json: setelah tiap write, push perubahan ke cloud
+  if (req.path.startsWith('/api') && db.hasCloud()) {
     const originalJson = res.json.bind(res);
     res.json = async function (data) {
       if (db.isDirty() && db.hasCloud()) {
@@ -73,7 +81,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     app: 'AI CLASSROOM',
-    version: '1.0.0',
+    version: '1.0.1',
     time: new Date().toISOString()
   });
 });
@@ -82,7 +90,7 @@ app.get('/api/system/info', (req, res) => {
   res.json({
     status: 'ok',
     app: 'AI CLASSROOM',
-    version: '1.0.0',
+    version: '1.0.1',
     nodeEnv: config.nodeEnv,
     showDemoAccounts: config.showDemoAccounts,
     cloudDb: db.getCloudProviderName(),
