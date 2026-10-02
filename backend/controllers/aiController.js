@@ -62,14 +62,18 @@ class AiController {
       const { message, context, action } = req.body;
       const activeConfig = db.getActiveAiConfig(req.user.id);
 
-      let responseText = '';
-
+      let prompt = message || '';
       if (action === 'create-soal') {
-        responseText = `Berikut adalah 3 butir soal pemahaman Kimia Hijau level HOTS:\n\n1. Analisis bagaimana penggantian katalis asam sulfat dengan zeolit alam dapat menurunkan beban limbah lingkungan.\n2. Hitung persentase ekonomi atom jika reaksi menghasilkan 150g produk utama dari 200g reaktan total.\n3. Rancanglah solusi penanganan pelarut dalam laboratorium sekolah berdasarkan 12 prinsip Green Chemistry!`;
+        prompt = `Sebagai asisten guru ahli, buatkan 3 butir soal pemahaman tingkat tinggi (HOTS) yang mendalam beserta rubrik dan pembahasannya untuk materi/topik: ${message || context || 'Mata Pelajaran'}. Format jawaban dengan jelas dan terstruktur.`;
       } else if (action === 'analyze-class') {
-        responseText = `Berdasarkan data kelas X-1 Kimia:\n- Rata-rata capaian kelas: 86/100 (Tuntas: 100%).\n- Siswa telah sangat baik memahami identifikasi pelarut ramah lingkungan.\n- Rekomendasi: Berikan penguatan ringkas pada materi penghitungan efisiensi atom untuk 1 siswa yang masih ragu.`;
-      } else {
-        responseText = `Halo Bapak/Ibu Guru. Saya adalah AI Assistant AI CLASSROOM. Saya siap membantu Anda menyusun modul LKPD terstruktur, membuat rubrik penilaian, menganalisis jawaban esai siswa, maupun merancang modul remedial/pengayaan yang adaptif. Ada materi atau tugas yang ingin kita kembangkan sekarang?`;
+        prompt = `Sebagai konsultan pedagogis, analisislah data performa kelas berikut dan berikan rekomendasi pengayaan serta langkah perbaikan remedial konkret: ${message || context || 'Data Kelas'}.`;
+      }
+
+      let responseText = '';
+      try {
+        responseText = await aiService.generate(prompt, activeConfig || {});
+      } catch (aiErr) {
+        return res.status(500).json({ success: false, message: 'Gagal menghubungi AI: ' + aiErr.message });
       }
 
       return res.status(200).json({
@@ -77,11 +81,11 @@ class AiController {
         data: {
           reply: responseText,
           provider: activeConfig ? activeConfig.provider : 'Google Gemini',
-          model: activeConfig ? activeConfig.model : 'gemini-1.5-pro'
+          model: activeConfig ? activeConfig.model : 'gemini-1.5-flash'
         }
       });
     } catch (err) {
-      return res.status(500).json({ success: false, message: 'Gagal memproses pesan AI Assistant.' });
+      return res.status(500).json({ success: false, message: 'Gagal memproses pesan AI Assistant: ' + err.message });
     }
   }
 

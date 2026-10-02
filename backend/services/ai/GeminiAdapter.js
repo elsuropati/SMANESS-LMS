@@ -1,14 +1,13 @@
 class GeminiAdapter {
   constructor(config = {}) {
     this.apiKey = config.api_key || config.apiKey || process.env.GEMINI_API_KEY || '';
-    this.model = config.model || 'gemini-1.5-pro';
+    this.model = config.model || process.env.GEMINI_MODEL || 'gemini-1.5-flash';
     this.endpoint = config.endpoint || 'https://generativelanguage.googleapis.com';
     this.mock = config.mock !== undefined ? config.mock : (!this.apiKey);
   }
 
   cleanJsonString(str) {
     if (!str) return '{}';
-    // Remove markdown code blocks if present
     let cleaned = str.trim();
     if (cleaned.startsWith('```json')) {
       cleaned = cleaned.substring(7);
@@ -23,7 +22,10 @@ class GeminiAdapter {
 
   async testConnection() {
     if (this.mock || !this.apiKey) {
-      return { success: true, message: 'Koneksi ke Google Gemini terverifikasi (Mock Mode Aktif).' };
+      return { 
+        success: true, 
+        message: 'Koneksi AI aktif dalam mode Simulasi/Mock. Untuk menghubungkan ke AI langsung, masukkan Google Gemini API Key di menu Pengaturan AI atau Environment Variables Netlify (GEMINI_API_KEY).' 
+      };
     }
 
     try {
@@ -32,7 +34,7 @@ class GeminiAdapter {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: 'Ping test connection. Jawab singkat: OK' }] }]
+          contents: [{ parts: [{ text: 'Ping test connection. Jawab satu kata: OK' }] }]
         })
       });
 
@@ -41,7 +43,7 @@ class GeminiAdapter {
         throw new Error(errorData.error?.message || `HTTP ${res.status}: Gagal terhubung ke Gemini API.`);
       }
 
-      return { success: true, message: `Berhasil terhubung ke Google Gemini API (${this.model}).` };
+      return { success: true, message: `Berhasil terhubung ke Google Gemini API Live (${this.model}).` };
     } catch (err) {
       throw new Error(`Koneksi Gemini gagal: ${err.message}`);
     }
@@ -49,148 +51,146 @@ class GeminiAdapter {
 
   async generate(prompt, options = {}) {
     if (this.mock || !this.apiKey) {
-      return `[Mock Gemini] Respon untuk prompt: "${prompt.substring(0, 50)}..."`;
+      return `[Asisten AI - Mode Standar]\nBerdasarkan topik yang Anda berikan, berikut adalah rekomendasi perencanaan materi dan panduan pedagogis:\n\n1. Rancang apersepsi berbasis fenomena nyata.\n2. Berikan pertanyaan pemantik HOTS.\n3. Lakukan penilaian formatif terpadu.\n\n(Tip: Pasang GEMINI_API_KEY di Netlify untuk jawaban AI langsung)`;
     }
 
-    try {
-      const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: options.temperature || 0.4
-          }
-        })
-      });
+    const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: options.temperature || 0.4
+        }
+      })
+    });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error?.message || `HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    } catch (err) {
-      console.warn('Real Gemini call failed, fallback to mock:', err.message);
-      return `[Fallback Response] ${err.message}`;
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}: Gagal berkomunikasi dengan Gemini API`);
     }
+
+    const data = await res.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   }
 
   async generateStructured(prompt, schema, options = {}) {
+    // Jika tidak ada API Key, gunakan generator dinamis berdasarkan topik yang diminta guru
     if (this.mock || !this.apiKey) {
+      const topicMatch = prompt.match(/tentang\s+([^\s,]+(?:\s+[^\s,]+)*?)(?:\s+dengan|$)/i);
+      const topic = topicMatch ? topicMatch[1] : 'Materi Pembelajaran';
+      const subjectMatch = prompt.match(/LKPD\s+([^\s,]+)/i);
+      const subject = subjectMatch ? subjectMatch[1] : 'Umum';
+
       return {
-        title: "LKPD Prinsip Kimia Hijau dalam Kehidupan Sehari-hari",
-        subject: "Kimia",
-        grade: "X",
+        title: `LKPD ${subject}: ${topic}`,
+        subject: subject,
+        grade: "Fase E",
         learning_objectives: [
-          "Menganalisis 12 prinsip kimia hijau",
-          "Mengevaluasi dampak reaksi sintesis terhadap lingkungan"
+          `Memahami konsep fundamental mengenai ${topic}`,
+          `Menganalisis studi kasus dan penerapan ${topic} dalam kehidupan sehari-hari`,
+          `Menarik kesimpulan dan solusi kreatif dari fenomena ${topic}`
         ],
         activities: [
-          { title: "Aktivitas 1", description: "Identifikasi pelarut ramah lingkungan" },
-          { title: "Aktivitas 2", description: "Perhitungan persentase Atom Economy" }
+          { title: "Aktivitas 1: Eksplorasi Kasus", instructions: `Amati fenomena terkait ${topic} di sekitar lingkungan Anda, lalu catat 3 temuan penting!` },
+          { title: "Aktivitas 2: Analisis & Eksperimen", instructions: `Bandingkan solusi konvensional dan solusi inovatif terkait permasalahan ${topic}!` }
         ],
         questions: [
-          { type: "essay", text: "Jelaskan mengapa air lebih diutamakan sebagai pelarut dibanding benzena!" }
+          { type: "essay", prompt: `Jelaskan secara komprehensif bagaimana prinsip utama ${topic} dapat menyelesaikan masalah di masyarakat!` },
+          { type: "essay", prompt: `Berikan 2 contoh konkret penerapan ${topic} yang telah Anda pelajari!` }
         ],
-        reflection: [
-          "Apa wawasan terpenting yang Anda peroleh hari ini mengenai kimia hijau?"
+        reflection_prompts: [
+          `Wawasan baru apa yang paling membuka pandangan Anda mengenai ${topic}?`,
+          `Komitmen nyata apa yang akan Anda terapkan setelah mempelajari materi ini?`
         ]
       };
     }
 
-    try {
-      const systemInstruction = `Anda adalah ahli kurikulum dan perancang LKPD (Lembar Kerja Peserta Didik).
-Hasilkan struktur dokumen LKPD dalam format JSON murni TANPA markdown formatting.
-Format JSON harus persis seperti ini:
+    // Live call ke Google Gemini API
+    const systemInstruction = `Anda adalah ahli kurikulum dan perancang LKPD (Lembar Kerja Peserta Didik) di Indonesia.
+Hasilkan struktur dokumen LKPD yang mendalam, kontekstual, dan pedagogis dalam format JSON murni TANPA markdown backticks.
+Format JSON harus persis:
 {
-  "title": "string judul",
+  "title": "string judul LKPD",
   "subject": "string mata pelajaran",
   "grade": "string kelas/fase",
-  "learning_objectives": ["tujuan 1", "tujuan 2"],
+  "learning_objectives": ["tujuan 1", "tujuan 2", "tujuan 3"],
   "activities": [
-    { "title": "Aktivitas 1", "description": "detail aktivitas" }
+    { "title": "Aktivitas 1: ...", "instructions": "panduan pengerjaan aktivitas" },
+    { "title": "Aktivitas 2: ...", "instructions": "panduan pengerjaan aktivitas" }
   ],
   "questions": [
-    { "type": "essay", "text": "pertanyaan evaluasi" }
+    { "type": "essay", "prompt": "pertanyaan pemahaman mendalam 1" },
+    { "type": "essay", "prompt": "pertanyaan pemahaman mendalam 2" }
   ],
-  "reflection": ["pertanyaan refleksi"]
+  "reflection_prompts": ["pertanyaan refleksi 1", "pertanyaan refleksi 2"]
 }`;
 
-      const fullPrompt = `${systemInstruction}\n\nPermintaan:\n${prompt}`;
-      const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: fullPrompt }] }],
-          generationConfig: {
-            temperature: 0.3,
-            responseMimeType: "application/json"
-          }
-        })
-      });
+    const fullPrompt = `${systemInstruction}\n\nInstruksi Guru:\n${prompt}`;
+    const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: fullPrompt }] }],
+        generationConfig: {
+          temperature: 0.3,
+          responseMimeType: "application/json"
+        }
+      })
+    });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error?.message || `HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
-      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-      return JSON.parse(this.cleanJsonString(rawText));
-    } catch (err) {
-      console.warn('Real Gemini structured generate error, falling back:', err.message);
-      return {
-        title: "LKPD Adaptif Cerdas",
-        subject: "Kimia",
-        grade: "X",
-        learning_objectives: ["Menganalisis konsep pembelajaran terpadu"],
-        activities: [{ title: "Aktivitas Inti", description: "Langkah eksplorasi mandiri" }],
-        questions: [{ type: "essay", text: "Jelaskan penalaran konsep yang telah dipelajari!" }],
-        reflection: ["Apa hal paling berharga yang Anda peroleh?"]
-      };
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`Google Gemini API (${this.model}): ${err.error?.message || 'HTTP ' + res.status}`);
     }
+
+    const data = await res.json();
+    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    return JSON.parse(this.cleanJsonString(rawText));
   }
 
   async evaluate(studentAnswers, rubric, options = {}) {
     if (this.mock || !this.apiKey) {
+      // Hitung evaluasi dinamis berdasarkan jawaban siswa
+      const ansValues = Object.values(studentAnswers || {}).join(' ');
+      const wordCount = ansValues.split(/\s+/).filter(Boolean).length;
+      const score = Math.min(95, Math.max(70, Math.round(75 + (wordCount / 5))));
+
       return {
-        score_recommendation: 86,
+        score_recommendation: score,
         strengths: [
-          "Penalaran logis terkait pemilihan pelarut air sangat tepat",
-          "Koneksi antara pencegahan limbah dan kelestarian ekosistem terurai jelas"
+          "Siswa telah menunjukkan keseriusan dalam menjabarkan alur argumen",
+          "Konsep dasar yang disampaikan relevan dengan tugas LKPD"
         ],
         weaknesses: [
-          "Perhitungan matematis efisiensi atom belum mencantumkan satuan stoikiometri lengkap"
+          wordCount < 30 ? "Jawaban masih relatif ringkas, dapat diperkaya dengan data pendukung" : "Perkuat sintesis pada bagian kesimpulan"
         ],
-        feedback: "Analisis konsep Anda sangat baik dan sistematis! Tingkatkan ketelitian pada penulisan formula stoikiometri agar mendapatkan skor sempurna.",
+        feedback: `Jawaban Anda sudah baik (skor rekomendasi ${score}). Pertahankan ketelitian dan perluas analisis kontekstual pada tugas berikutnya!`,
         misconceptions: [],
-        follow_up_needed: false
+        follow_up_needed: score < 75
       };
     }
 
-    try {
-      const systemInstruction = `Anda adalah Asisten Guru Penilai Tugas di AI CLASSROOM.
-Tugas Anda adalah membaca jawaban siswa, membandingkannya dengan rubrik dan materi, lalu menghasilkan rekomendasi penilaian pedagogis dalam format JSON murni TANPA markdown formatting.
-Format JSON harus:
+    const systemInstruction = `Anda adalah Asisten Guru Penilai di AI CLASSROOM.
+Analisis jawaban siswa, bandingkan dengan rubrik dan tujuan pembelajaran, lalu berikan rekomendasi penilaian pedagogis dalam format JSON murni TANPA markdown backticks.
+Format JSON harus persis:
 {
   "score_recommendation": 85,
-  "strengths": ["poin kelebihan 1", "poin kelebihan 2"],
-  "weaknesses": ["poin kekurangan 1"],
-  "feedback": "kalimat umpan balik konstruktif yang hangat dan mendidik untuk siswa",
-  "misconceptions": ["miskonsepsi atau kekeliruan konsep siswa jika ada"],
+  "strengths": ["kelebihan 1", "kelebihan 2"],
+  "weaknesses": ["kekurangan 1"],
+  "feedback": "kalimat umpan balik konstruktif dan memotivasi untuk siswa",
+  "misconceptions": ["miskonsepsi jika ada"],
   "follow_up_needed": true/false
 }`;
 
-      const prompt = `${systemInstruction}
+    const prompt = `${systemInstruction}
 
 Jawaban Siswa:
 ${JSON.stringify(studentAnswers, null, 2)}
 
-Rubrik / Acuan Penilaian:
+Rubrik / Acuan Materi:
 ${rubric || 'Penilaian pemahaman konsep, argumen kritis, dan ketepatan penalaran.'}
 
 Tujuan Pembelajaran:
@@ -198,38 +198,27 @@ ${options.learningObjectives ? JSON.stringify(options.learningObjectives) : 'Pen
 
 Hasilkan JSON evaluasi:`;
 
-      const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.2,
-            responseMimeType: "application/json"
-          }
-        })
-      });
+    const url = `${this.endpoint}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.2,
+          responseMimeType: "application/json"
+        }
+      })
+    });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error?.message || `HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
-      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-      return JSON.parse(this.cleanJsonString(rawText));
-    } catch (err) {
-      console.warn('Real Gemini evaluation error, falling back:', err.message);
-      return {
-        score_recommendation: 84,
-        strengths: ["Konsep utama telah dijawab dengan baik"],
-        weaknesses: ["Penjelasan dapat diperdalam pada bagian analisis"],
-        feedback: "Jawaban telah menunjukkan pemahaman konsep yang baik.",
-        misconceptions: [],
-        follow_up_needed: false
-      };
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`Google Gemini Evaluator: ${err.error?.message || 'HTTP ' + res.status}`);
     }
+
+    const data = await res.json();
+    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    return JSON.parse(this.cleanJsonString(rawText));
   }
 }
 

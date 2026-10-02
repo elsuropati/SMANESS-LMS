@@ -5,15 +5,22 @@ const OpenAICompatibleAdapter = require('./OpenAICompatibleAdapter');
 
 class AiService {
   getAdapter(providerConfig = {}) {
-    const provider = (providerConfig.provider || 'gemini').toLowerCase();
+    const provider = (providerConfig.provider || process.env.AI_PROVIDER || 'gemini').toLowerCase();
     
-    // Determine mock mode:
-    // If MOCK_AI=true in env, always mock.
-    // If MOCK_AI=false, use real call if apiKey or endpoint is supplied.
-    const isMock = config.mockAi === true && !providerConfig.forceReal;
+    // API key dari setting user ATAU dari environment variable server (Netlify/local)
+    const apiKey = providerConfig.api_key || 
+                   providerConfig.apiKey || 
+                   process.env.GEMINI_API_KEY || 
+                   process.env.AI_API_KEY || 
+                   process.env.OPENAI_API_KEY || '';
+
+    // Jika API key ada, WAJIB gunakan real AI (bukan mock)
+    // Hanya gunakan mock jika benar-benar tidak ada API key di server maupun profil
+    const isMock = !apiKey && config.mockAi;
 
     const adapterConfig = {
       ...providerConfig,
+      api_key: apiKey,
       mock: isMock
     };
 

@@ -123,12 +123,12 @@ export async function renderFollowupTeacherView(container, { user, showToast }) 
 
               <div class="form-group">
                 <label class="form-label">Materi / Topik yang Perlu Diperkuat *</label>
-                <input type="text" id="flw-topic-input" class="form-input" value="Perhitungan Efisiensi Atom & Stoikiometri" required />
+                <input type="text" id="flw-topic-input" class="form-input" placeholder="Contoh: Pemahaman Konsep Dasar & Analisis Soal" required />
               </div>
 
               <div class="form-group">
                 <label class="form-label">Identifikasi Kendala Siswa *</label>
-                <input type="text" id="flw-problem-input" class="form-input" value="Ragu dalam membedakan rumus yield teoretis dan atom economy" required />
+                <input type="text" id="flw-problem-input" class="form-input" placeholder="Contoh: Perlu bimbingan tambahan dalam merumuskan kesimpulan" required />
               </div>
 
               <div class="form-group">

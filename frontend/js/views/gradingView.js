@@ -299,7 +299,7 @@ export async function renderGradingView(container, { user, showToast }) {
         const res = await api.evaluateSubmission({
           submissionId: sub.id,
           studentAnswers: sub.answers,
-          rubric: 'Rubrik pemahaman konsep pelarut hijau dan stoikiometri atom'
+          rubric: `Tugas: ${sub.assignment_title || 'Tugas LKPD'}. Analisis kesesuaian jawaban dengan materi dan ketepatan argumentasi ilmiah.`
         });
 
         currentAiRec = res.data;
