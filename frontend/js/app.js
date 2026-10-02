@@ -12,6 +12,7 @@ import { renderFollowupTeacherView } from './views/followupTeacherView.js';
 import { renderAiAssistantView } from './views/aiAssistantView.js';
 import { renderReportsView } from './views/reportsView.js';
 import { renderAiSettingsView } from './views/aiSettingsView.js';
+import { renderAdminDashboard, renderTeacherManagementView } from './views/adminViews.js';
 
 // Student Views
 import { renderStudentDashboard } from './views/studentDash.js';
@@ -52,6 +53,13 @@ export function showToast(message, type = 'info') {
 }
 
 // Navigation Structure
+const ADMIN_NAV = [
+  { id: 'dashboard', label: 'Dashboard Admin', icon: '📊' },
+  { id: 'teachers', label: 'Kelola Akun Guru', icon: '👨‍🏫' },
+  { id: 'classes', label: 'Data Kelas & Siswa', icon: '🏫' },
+  { id: 'settings', label: 'Pengaturan AI & Sistem', icon: '⚙️' }
+];
+
 const TEACHER_NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: '📊' },
   { id: 'classes', label: 'Kelas & Siswa', icon: '🏫' },
@@ -139,10 +147,21 @@ class App {
   }
 
   renderAppShell(user) {
+    const isAdmin = user.role === 'admin';
     const isTeacher = user.role === 'teacher';
-    const navItems = isTeacher ? TEACHER_NAV : STUDENT_NAV;
-    const roleTitle = isTeacher ? 'GURU' : 'SISWA';
-    const roleTagClass = isTeacher ? 'teacher' : 'student';
+    let navItems = STUDENT_NAV;
+    let roleTitle = 'SISWA';
+    let roleTagClass = 'student';
+
+    if (isAdmin) {
+      navItems = ADMIN_NAV;
+      roleTitle = 'ADMIN SEKOLAH';
+      roleTagClass = 'danger';
+    } else if (isTeacher) {
+      navItems = TEACHER_NAV;
+      roleTitle = 'GURU';
+      roleTagClass = 'teacher';
+    }
 
     this.appRoot.innerHTML = `
       <div class="app-wrapper">
@@ -251,7 +270,23 @@ class App {
     const user = state.user;
     const viewId = this.currentViewId;
 
-    if (user.role === 'teacher') {
+    if (user.role === 'admin') {
+      switch (viewId) {
+        case 'teachers':
+          renderTeacherManagementView(mainContainer, { user, showToast });
+          break;
+        case 'classes':
+          renderClassesView(mainContainer, { user, showToast });
+          break;
+        case 'settings':
+          renderAiSettingsView(mainContainer, { user, showToast });
+          break;
+        case 'dashboard':
+        default:
+          renderAdminDashboard(mainContainer, { user, showToast });
+          break;
+      }
+    } else if (user.role === 'teacher') {
       switch (viewId) {
         case 'classes':
           renderClassesView(mainContainer, { user, showToast });

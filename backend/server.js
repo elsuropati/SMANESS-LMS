@@ -16,6 +16,7 @@ const gradeRoutes = require('./routes/gradeRoutes');
 const followupRoutes = require('./routes/followupRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/grades', gradeRoutes);
 app.use('/api/followups', followupRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check & System info
 app.get('/api/health', (req, res) => {

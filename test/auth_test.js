@@ -274,7 +274,52 @@ async function runTests() {
     assert.ok(res.body.includes('Catatan Umpan Balik Guru'));
   });
 
-  // 12. Class Analytics Report
+  // 12. Admin Login & Teacher Management
+  let adminToken = '';
+  await test('Admin login returns 200 and role="admin"', async () => {
+    const res = await request(app, { path: '/api/auth/login', method: 'POST' }, {
+      email: 'admin@aiclassroom.sch.id',
+      password: 'password123'
+    });
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(res.body.data.user.role, 'admin');
+    assert.strictEqual(res.body.data.user.name, 'Administrator Sekolah');
+    adminToken = res.body.data.token;
+  });
+
+  await test('Admin can list teachers and create a new teacher account', async () => {
+    const listRes = await request(app, {
+      path: '/api/admin/teachers',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${adminToken}` }
+    });
+    assert.strictEqual(listRes.status, 200);
+    assert.ok(Array.isArray(listRes.body.data));
+
+    const createRes = await request(app, {
+      path: '/api/admin/teachers',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${adminToken}` }
+    }, {
+      name: 'Rina Wijaya, S.Pd.',
+      email: 'rinawijaya@aiclassroom.sch.id',
+      nip: '199001012015012001',
+      subject: 'Fisika',
+      password: 'password123'
+    });
+    assert.strictEqual(createRes.status, 201);
+    assert.strictEqual(createRes.body.data.name, 'Rina Wijaya, S.Pd.');
+
+    // Verify new teacher can log in immediately
+    const loginRes = await request(app, { path: '/api/auth/login', method: 'POST' }, {
+      email: 'rinawijaya@aiclassroom.sch.id',
+      password: 'password123'
+    });
+    assert.strictEqual(loginRes.status, 200);
+    assert.strictEqual(loginRes.body.data.user.role, 'teacher');
+  });
+
+  // 13. Class Analytics Report
   await test('Class analytics returns average, mastery rate, and difficult topics', async () => {
     const reportRes = await request(app, {
       path: '/api/reports/class-analytics',

@@ -1,6 +1,18 @@
 {
   "users": [
     {
+      "id": "usr-admin-1",
+      "name": "Administrator Sekolah",
+      "email": "admin@aiclassroom.sch.id",
+      "password_hash": "$2a$10$RK16DaFtnsIRZGHYvG2iVO46cDntnSf3I.PExDbhKKl/eiC8U6zGW",
+      "role": "admin",
+      "nip_or_nis": "197901012005011001",
+      "subject": "Administrator",
+      "avatar": "AD",
+      "status": "active",
+      "created_at": "2026-10-02T04:14:09.909Z"
+    },
+    {
       "id": "usr-teacher-1",
       "name": "Budi Santoso, S.Pd.",
       "email": "guru@aiclassroom.sch.id",
@@ -131,6 +143,40 @@
       "class_id": "cls-muqg6s9q",
       "avatar": "CK",
       "created_at": "2026-10-02T04:13:11.335Z"
+    },
+    {
+      "id": "usr-student-muqgabka",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "password_hash": "$2a$10$50zv.RA2VBSyydz1D887NepB8ZraGwJ.dmJcWJB6fkuJUV05bM/7W",
+      "role": "student",
+      "nip_or_nis": "10250",
+      "class_id": "cls-muqgabk7",
+      "avatar": "BP",
+      "created_at": "2026-10-02T04:15:56.235Z"
+    },
+    {
+      "id": "usr-student-muqgabm4",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "password_hash": "$2a$10$.1pdRJ5xB7r74d2Mk952mu6E2nh14NPBDM7.qvJblIXzPhUB9CuP.",
+      "role": "student",
+      "nip_or_nis": "10251",
+      "class_id": "cls-muqgabk7",
+      "avatar": "CK",
+      "created_at": "2026-10-02T04:15:56.301Z"
+    },
+    {
+      "id": "usr-teacher-muqgabqw",
+      "name": "Rina Wijaya, S.Pd.",
+      "email": "rinawijaya@aiclassroom.sch.id",
+      "password_hash": "$2a$10$QvUh4lya7ymqxQCiQCoYYO4dA9npbS0kwPRBm4TME.aYQDTdN.Qli",
+      "role": "teacher",
+      "nip_or_nis": "199001012015012001",
+      "subject": "Fisika",
+      "avatar": "RW",
+      "status": "active",
+      "created_at": "2026-10-02T04:15:56.475Z"
     }
   ],
   "classes": [
@@ -194,6 +240,17 @@
       "status": "active",
       "student_count": 2,
       "created_at": "2026-10-02T04:13:11.198Z",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-2",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Kelas Paralel Kimia Fase E"
+    },
+    {
+      "id": "cls-muqgabk7",
+      "status": "active",
+      "student_count": 2,
+      "created_at": "2026-10-02T04:15:56.167Z",
       "teacher_id": "usr-teacher-1",
       "name": "X-2",
       "subject": "Kimia",
@@ -322,6 +379,28 @@
       "status": "active",
       "progress": 0,
       "created_at": "2026-10-02T04:13:11.335Z"
+    },
+    {
+      "id": "std-muqgabm3",
+      "user_id": "usr-student-muqgabka",
+      "class_id": "cls-muqgabk7",
+      "nis": "10250",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T04:15:56.235Z"
+    },
+    {
+      "id": "std-muqgabnx",
+      "user_id": "usr-student-muqgabm4",
+      "class_id": "cls-muqgabk7",
+      "nis": "10251",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T04:15:56.301Z"
     }
   ],
   "lkpd": [
@@ -475,6 +554,30 @@
       "objectives": [
         "Menghitung mol reaktan"
       ]
+    },
+    {
+      "id": "lkpd-muqgabo5",
+      "status": "draft",
+      "created_at": "2026-10-02T04:15:56.309Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    },
+    {
+      "id": "lkpd-muqgabo7",
+      "status": "draft",
+      "created_at": "2026-10-02T04:15:56.309Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi (Salinan)",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
     }
   ],
   "assignments": [
@@ -559,6 +662,20 @@
       "title": "Tugas Bab Stoikiometri",
       "subject": "Kimia",
       "start_date": "2026-10-02T04:13:11.349Z",
+      "due_date": "2026-10-20T23:59:00Z",
+      "instructions": "Kerjakan secara cermat."
+    },
+    {
+      "id": "asg-muqgaboa",
+      "status": "active",
+      "class_name": "X-2",
+      "created_at": "2026-10-02T04:15:56.314Z",
+      "lkpd_id": "lkpd-muqgabo5",
+      "class_id": "cls-muqgabk7",
+      "teacher_id": "usr-teacher-1",
+      "title": "Tugas Bab Stoikiometri",
+      "subject": "Kimia",
+      "start_date": "2026-10-02T04:15:56.314Z",
       "due_date": "2026-10-20T23:59:00Z",
       "instructions": "Kerjakan secara cermat."
     }
@@ -736,6 +853,24 @@
       "feedback": null,
       "graded_at": null,
       "created_at": "2026-10-02T04:13:11.353Z"
+    },
+    {
+      "id": "sub-muqgaboc",
+      "assignment_id": "asg-muqgaboa",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "student_nis": "10241",
+      "status": "submitted",
+      "answers": {
+        "activity1": "Analisis massa gas oksigen",
+        "q2": "Hukum kekekalan massa Lavoisier berlaku pada sistem tertutup",
+        "reflection": "Materi stoikiometri sangat terstruktur"
+      },
+      "submitted_at": "2026-10-02T04:15:56.318Z",
+      "score": null,
+      "feedback": null,
+      "graded_at": null,
+      "created_at": "2026-10-02T04:15:56.316Z"
     }
   ],
   "followups": [
@@ -788,6 +923,24 @@
     }
   ],
   "activities": [
+    {
+      "id": "act-muqgaboe",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T04:15:56.318Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqgaboa",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"Tugas Bab Stoikiometri\" untuk Kelas X-2",
+      "timestamp": "2026-10-02T04:15:56.314Z",
+      "icon": "clipboard-list"
+    },
     {
       "id": "act-muqg6se4",
       "user_id": "usr-student-1",

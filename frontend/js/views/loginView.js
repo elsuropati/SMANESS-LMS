@@ -61,6 +61,9 @@ export function renderLoginView(container, { onLoginSuccess, showToast }) {
         <div class="demo-accounts-box" id="demo-accounts-box" style="display: none;">
           <div class="demo-title">⚡ Akun Pengujian Cepat (Mode Uji / Development)</div>
           <div class="demo-buttons-row">
+            <button type="button" class="btn-demo-pill" id="btn-fill-admin" style="border-color: #fca5a5; color: #b91c1c;">
+              <span>🛠️ Admin (Sekolah)</span>
+            </button>
             <button type="button" class="btn-demo-pill" id="btn-fill-teacher">
               <span>👨‍🏫 Guru (Budi Santoso)</span>
             </button>
@@ -117,6 +120,16 @@ export function renderLoginView(container, { onLoginSuccess, showToast }) {
   });
 
   // Demo auto-fill helpers
+  const fillAdminBtn = container.querySelector('#btn-fill-admin');
+  if (fillAdminBtn) {
+    fillAdminBtn.addEventListener('click', () => {
+      emailInput.value = 'admin@aiclassroom.sch.id';
+      passwordInput.value = 'password123';
+      alertContainer.innerHTML = '';
+      showToast('Kredensial Admin terisi. Silakan klik Masuk ke Akun.', 'info');
+    });
+  }
+
   fillTeacherBtn.addEventListener('click', () => {
     emailInput.value = 'guru@aiclassroom.sch.id';
     passwordInput.value = 'password123';

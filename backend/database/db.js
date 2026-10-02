@@ -11,6 +11,18 @@ const DB_PATH = isServerless
 const INITIAL_DATA = {
   users: [
     {
+      id: 'usr-admin-1',
+      name: 'Administrator Sekolah',
+      email: 'admin@aiclassroom.sch.id',
+      password_hash: '$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.', // password123
+      role: 'admin',
+      nip_or_nis: '197901012005011001',
+      subject: 'Administrator',
+      avatar: 'AD',
+      status: 'active',
+      created_at: '2026-09-01T07:00:00Z'
+    },
+    {
       id: 'usr-teacher-1',
       name: 'Budi Santoso, S.Pd.',
       email: 'guru@aiclassroom.sch.id',
@@ -301,6 +313,93 @@ class Database {
   }
 
   // Users
+
+  // Admin Methods
+  getTeachers() {
+    const data = this.read();
+    return data.users.filter(u => u.role === 'teacher').map(u => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      nip: u.nip_or_nis,
+      subject: u.subject || 'Umum',
+      status: u.status || 'active',
+      created_at: u.created_at
+    }));
+  }
+
+  createTeacher(teacherData) {
+    const data = this.read();
+    const existing = data.users.find(u => u.email.toLowerCase() === teacherData.email.toLowerCase().trim());
+    if (existing) {
+      throw new Error('Email akun guru ini sudah terdaftar di sistem.');
+    }
+
+    const userId = 'usr-teacher-' + Date.now().toString(36);
+    const newTeacher = {
+      id: userId,
+      name: teacherData.name.trim(),
+      email: teacherData.email.toLowerCase().trim(),
+      password_hash: bcrypt.hashSync(teacherData.password || 'password123', 10),
+      role: 'teacher',
+      nip_or_nis: teacherData.nip ? teacherData.nip.trim() : '-',
+      subject: teacherData.subject ? teacherData.subject.trim() : 'Umum',
+      avatar: teacherData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
+      status: 'active',
+      created_at: new Date().toISOString()
+    };
+
+    data.users.push(newTeacher);
+    this.write(data);
+    return {
+      id: newTeacher.id,
+      name: newTeacher.name,
+      email: newTeacher.email,
+      nip: newTeacher.nip_or_nis,
+      subject: newTeacher.subject,
+      status: newTeacher.status
+    };
+  }
+
+  toggleTeacherStatus(teacherId, status) {
+    const data = this.read();
+    const idx = data.users.findIndex(u => u.id === teacherId && u.role === 'teacher');
+    if (idx !== -1) {
+      data.users[idx].status = status;
+      this.write(data);
+      return data.users[idx];
+    }
+    return null;
+  }
+
+  resetTeacherPassword(teacherId) {
+    const data = this.read();
+    const idx = data.users.findIndex(u => u.id === teacherId && u.role === 'teacher');
+    if (idx !== -1) {
+      data.users[idx].password_hash = bcrypt.hashSync('password123', 10);
+      this.write(data);
+      return true;
+    }
+    return false;
+  }
+
+  getAdminStats() {
+    const data = this.read();
+    const teachers = data.users.filter(u => u.role === 'teacher');
+    const students = data.users.filter(u => u.role === 'student');
+    const classes = data.classes || [];
+    const lkpd = data.lkpd || [];
+    const assignments = data.assignments || [];
+
+    return {
+      totalTeachers: teachers.length,
+      totalStudents: students.length,
+      totalClasses: classes.length,
+      totalLkpd: lkpd.length,
+      totalAssignments: assignments.length,
+      systemStatus: 'Online (Optimal)'
+    };
+  }
   findUserByEmail(email) {
     const data = this.read();
     return data.users.find(u => u.email.toLowerCase() === email.toLowerCase());

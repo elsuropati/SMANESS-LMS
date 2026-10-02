@@ -39,6 +39,13 @@ export async function apiRequest(endpoint, options = {}) {
 }
 
 export const api = {
+  // Admin Methods
+  getAdminStats: () => apiRequest('/api/admin/stats'),
+  getAdminTeachers: () => apiRequest('/api/admin/teachers'),
+  createTeacherByAdmin: (data) => apiRequest('/api/admin/teachers', { method: 'POST', body: JSON.stringify(data) }),
+  toggleTeacherStatusByAdmin: (id, status) => apiRequest(`/api/admin/teachers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  resetTeacherPasswordByAdmin: (id) => apiRequest(`/api/admin/teachers/${id}/reset-password`, { method: 'POST' }),
+
   // Auth
   login: (email, password) => apiRequest('/api/auth/login', {
     method: 'POST',
