@@ -276,47 +276,73 @@ class Database {
   }
 
   init() {
-    if (!fs.existsSync(DB_PATH)) {
+    if (isServerless) {
+      // Di Netlify: jika /tmp kosong, seed dari data.json
+      // Jika /tmp sudah ada, MERGE supaya users dari seed tidak hilang
       const seedFile = path.join(__dirname, 'data.json');
-      if (fs.existsSync(seedFile)) {
+      if (!fs.existsSync(DB_PATH)) {
+        if (fs.existsSync(seedFile)) {
+          try {
+            fs.copyFileSync(seedFile, DB_PATH);
+            return;
+          } catch (e) {}
+        }
+        this.write(INITIAL_DATA);
+      } else {
+        // /tmp ada: merge akun admin/guru dari seed agar tidak hilang saat cold start
         try {
-          fs.copyFileSync(seedFile, DB_PATH);
-          return;
-        } catch (e) {}
+          if (fs.existsSync(seedFile)) {
+            const existing = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+            const seed = JSON.parse(fs.readFileSync(seedFile, 'utf8'));
+            // Merge: tambahkan user dari seed yang belum ada di /tmp
+            const existingIds = new Set((existing.users || []).map(u => u.id));
+            const seedUsers = (seed.users || []).filter(u => !existingIds.has(u.id));
+            if (seedUsers.length > 0) {
+              existing.users = [...(existing.users || []), ...seedUsers];
+              fs.writeFileSync(DB_PATH, JSON.stringify(existing, null, 2), 'utf8');
+            }
+          }
+        } catch (e) {
+          console.error('Merge seed error:', e);
+        }
       }
-      this.write(INITIAL_DATA);
+    } else {
+      // Lokal: gunakan data.json langsung (DB_PATH === data.json)
+      if (!fs.existsSync(DB_PATH)) {
+        this.write(INITIAL_DATA);
+      }
     }
   }
 
   cleanupData(data) {
     if (!data) return data;
-    const userIds = new Set((data.users || []).map(u => u.id));
     const studentIds = new Set((data.students || []).map(s => s.id));
     const studentUserIds = new Set((data.students || []).map(s => s.user_id).filter(Boolean));
-    const validStudentIds = new Set([...userIds, ...studentIds, ...studentUserIds]);
+    // validStudentIds: semua ID yang bisa jadi student_id di submissions
+    const validStudentIds = new Set([
+      ...(data.users || []).filter(u => u.role === 'student').map(u => u.id),
+      ...studentIds,
+      ...studentUserIds
+    ]);
 
     const classIds = new Set((data.classes || []).map(c => c.id));
     const lkpdIds = new Set((data.lkpd || []).map(l => l.id));
 
-    // Bersihkan assignment yang LKPD atau Kelasnya sudah tidak ada
+    // Bersihkan assignment yang kelasnya ATAU LKPD-nya sudah tidak ada
     data.assignments = (data.assignments || []).filter(a => {
-      return classIds.has(a.class_id) && lkpdIds.has(a.lkpd_id);
+      return classIds.has(a.class_id) && (!a.lkpd_id || lkpdIds.has(a.lkpd_id));
     });
 
     const assignIds = new Set(data.assignments.map(a => a.id));
 
-    // Bersihkan submission yang tugasnya atau siswanya sudah dihapus
+    // Bersihkan submission yang tugasnya ATAU siswanya sudah dihapus
     data.submissions = (data.submissions || []).filter(s => {
-      const hasAssign = assignIds.has(s.assignment_id);
-      const hasStudent = validStudentIds.has(s.student_id);
-      return hasAssign && hasStudent;
+      return assignIds.has(s.assignment_id) && validStudentIds.has(s.student_id);
     });
 
-    // Bersihkan followup yang tugas atau siswanya sudah dihapus
+    // Bersihkan followup yang siswanya sudah dihapus
     data.followups = (data.followups || []).filter(f => {
-      const hasStudent = validStudentIds.has(f.student_id);
-      const hasAssign = !f.assignment_id || assignIds.has(f.assignment_id);
-      return hasStudent && hasAssign;
+      return validStudentIds.has(f.student_id);
     });
 
     // Update student_count di setiap kelas secara akurat
@@ -330,12 +356,16 @@ class Database {
   read() {
     try {
       if (!fs.existsSync(DB_PATH)) {
-        this.write(INITIAL_DATA);
-        return INITIAL_DATA;
+        const seedFile = path.join(__dirname, 'data.json');
+        if (isServerless && fs.existsSync(seedFile)) {
+          try { fs.copyFileSync(seedFile, DB_PATH); } catch (e) {}
+        } else {
+          this.write(INITIAL_DATA);
+          return INITIAL_DATA;
+        }
       }
       const raw = fs.readFileSync(DB_PATH, 'utf8');
-      const parsed = JSON.parse(raw);
-      return this.cleanupData(parsed);
+      return JSON.parse(raw);
     } catch (err) {
       console.error('Error reading database file:', err);
       return INITIAL_DATA;
