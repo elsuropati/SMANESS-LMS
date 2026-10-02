@@ -575,11 +575,12 @@ class Database {
     return null;
   }
 
-  duplicateLkpd(id) {
+  duplicateLkpd(id, teacherId) {
     const lkpd = this.getLkpdById(id);
     if (lkpd) {
       const copy = {
         ...lkpd,
+        teacher_id: teacherId || lkpd.teacher_id,
         title: `${lkpd.title} (Salinan)`,
         status: 'draft'
       };
@@ -947,20 +948,29 @@ class Database {
     return true;
   }
 
-  deleteLkpd(lkpdId, teacherId) {
+  deleteLkpd(lkpdId) {
     const data = this.read();
-    const idx = data.lkpd.findIndex(l => l.id === lkpdId && l.teacher_id === teacherId);
+    const idx = data.lkpd.findIndex(l => l.id === lkpdId);
     if (idx === -1) return false;
     data.lkpd.splice(idx, 1);
+    // Hapus juga assignment terkait
+    data.assignments = (data.assignments || []).filter(a => a.lkpd_id !== lkpdId);
     this.write(data);
     return true;
   }
 
-  deleteClass(classId, teacherId) {
+  deleteClass(classId) {
     const data = this.read();
-    const idx = data.classes.findIndex(c => c.id === classId && c.teacher_id === teacherId);
+    const idx = data.classes.findIndex(c => c.id === classId);
     if (idx === -1) return false;
     data.classes.splice(idx, 1);
+    // Hapus juga siswa di kelas ini dari tabel students dan users
+    const studentsInClass = (data.students || []).filter(s => s.class_id === classId);
+    const studentUserIds = studentsInClass.map(s => s.user_id || s.id);
+    data.students = (data.students || []).filter(s => s.class_id !== classId);
+    data.users = (data.users || []).filter(u => !studentUserIds.includes(u.id));
+    // Hapus juga assignment terkait kelas ini
+    data.assignments = (data.assignments || []).filter(a => a.class_id !== classId);
     this.write(data);
     return true;
   }

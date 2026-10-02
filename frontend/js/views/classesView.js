@@ -45,9 +45,12 @@ export async function renderClassesView(container, { user, showToast }) {
               <h3 id="class-title-display" style="font-size: 1.2rem; font-weight: 800; color: var(--text-main);">Kelas</h3>
               <p id="class-desc-display" style="font-size: 0.84rem; color: var(--text-muted); margin-top: 2px;">Deskripsi kelas</p>
             </div>
-            <div style="display: flex; gap: 12px;">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
               <span class="stat-badge" id="class-year-badge">TA 2026/2027</span>
               <span class="stat-badge" id="class-student-count-badge">0 Siswa</span>
+              <button class="btn-demo-pill" id="btn-delete-active-class" title="Hapus kelas ini" style="border-color: var(--danger); color: var(--danger); font-weight: 700; padding: 6px 14px;">
+                🗑️ Hapus Kelas
+              </button>
             </div>
           </div>
         </div>
@@ -246,6 +249,27 @@ export async function renderClassesView(container, { user, showToast }) {
     selectedClassId = e.target.value;
     loadStudentsForClass(selectedClassId);
   });
+
+  // Delete active class
+  const btnDeleteClass = container.querySelector('#btn-delete-active-class');
+  if (btnDeleteClass) {
+    btnDeleteClass.addEventListener('click', async () => {
+      if (!selectedClassId) return;
+      const cls = currentClasses.find(c => c.id === selectedClassId);
+      const className = cls ? cls.name : 'ini';
+      if (confirm(`⚠️ Hapus permanen Kelas "${className}" beserta seluruh data peserta didik dan penugasan di dalamnya?\n\nAksi ini tidak dapat dibatalkan.`)) {
+        try {
+          await api.deleteClass(selectedClassId);
+          showToast(`Kelas "${className}" berhasil dihapus.`, 'success');
+          selectedClassId = null;
+          loadClasses();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      }
+    });
+  }
+
 
   // Modal: Tambah Kelas Baru
   container.querySelector('#btn-open-create-class').addEventListener('click', () => {

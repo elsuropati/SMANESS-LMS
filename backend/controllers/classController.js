@@ -123,7 +123,7 @@ class ClassController {
   deleteClass(req, res) {
     try {
       const { classId } = req.params;
-      const deleted = db.deleteClass(classId, req.user.id);
+      const deleted = db.deleteClass(classId);
       if (!deleted) {
         return res.status(404).json({ success: false, message: 'Kelas tidak ditemukan.' });
       }

@@ -52,7 +52,7 @@ class LkpdController {
   duplicateLkpd(req, res) {
     try {
       const { id } = req.params;
-      const duplicated = db.duplicateLkpd(id);
+      const duplicated = db.duplicateLkpd(id, req.user.id);
       if (!duplicated) {
         return res.status(404).json({ success: false, message: 'LKPD tidak ditemukan.' });
       }
@@ -65,7 +65,7 @@ class LkpdController {
   deleteLkpd(req, res) {
     try {
       const { id } = req.params;
-      const deleted = db.deleteLkpd(id, req.user.id);
+      const deleted = db.deleteLkpd(id);
       if (!deleted) {
         return res.status(404).json({ success: false, message: 'LKPD tidak ditemukan.' });
       }
