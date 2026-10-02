@@ -1,0 +1,825 @@
+{
+  "users": [
+    {
+      "id": "usr-teacher-1",
+      "name": "Budi Santoso, S.Pd.",
+      "email": "guru@aiclassroom.sch.id",
+      "password_hash": "$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.",
+      "role": "teacher",
+      "nip_or_nis": "198507122010011005",
+      "subject": "Kimia",
+      "avatar": "BS",
+      "created_at": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": "usr-student-1",
+      "name": "Ahmad Fauzi",
+      "email": "siswa@aiclassroom.sch.id",
+      "password_hash": "$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.",
+      "role": "student",
+      "nip_or_nis": "10241",
+      "class_id": "cls-x1",
+      "avatar": "AF",
+      "created_at": "2026-09-02T08:00:00Z"
+    },
+    {
+      "id": "usr-student-2",
+      "name": "Siti Nurhaliza",
+      "email": "siti@aiclassroom.sch.id",
+      "password_hash": "$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.",
+      "role": "student",
+      "nip_or_nis": "10242",
+      "class_id": "cls-x1",
+      "avatar": "SN",
+      "created_at": "2026-09-02T08:00:00Z"
+    },
+    {
+      "id": "usr-student-muqcwero",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "password_hash": "$2a$10$5OyCBQy5RK5Z34WsoqjRguQZ.bLUS.71Ec2176w8IOnikDb.Sp37S",
+      "role": "student",
+      "nip_or_nis": "10250",
+      "class_id": "cls-muqcwerj",
+      "avatar": "BP",
+      "created_at": "2026-10-02T02:41:08.369Z"
+    },
+    {
+      "id": "usr-student-muqcwetu",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "password_hash": "$2a$10$kRPGEmTbIEGkv5CpREkpCOi2DQWjMYmzrpC/b3RowEegMatumSWhe",
+      "role": "student",
+      "nip_or_nis": "10251",
+      "class_id": "cls-muqcwerj",
+      "avatar": "CK",
+      "created_at": "2026-10-02T02:41:08.447Z"
+    },
+    {
+      "id": "usr-student-muqda28l",
+      "name": "kholiq",
+      "email": "12345@aiclassroom.sch.id",
+      "password_hash": "$2a$10$SyXuf77XwSqv0IIcNlX/MuDRce/fWYN3I7Zm0XLdBxzVTVKHxIzOq",
+      "role": "student",
+      "nip_or_nis": "12345",
+      "class_id": "cls-muqd9qb4",
+      "avatar": "K",
+      "created_at": "2026-10-02T02:51:45.351Z"
+    },
+    {
+      "id": "usr-student-muqesuc3",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "password_hash": "$2a$10$qOz6q/hrmFWt3iocKM0bOO9xw2geRxoNnmxQN.QOLs988cgPcXhyu",
+      "role": "student",
+      "nip_or_nis": "10250",
+      "class_id": "cls-muqesubx",
+      "avatar": "BP",
+      "created_at": "2026-10-02T03:34:21.140Z"
+    },
+    {
+      "id": "usr-student-muqesudw",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "password_hash": "$2a$10$dUNFFbpoDrpNJGS7u5gWjO6WQRvi/I9esxU5xdaG5XadS9uJ4M47W",
+      "role": "student",
+      "nip_or_nis": "10251",
+      "class_id": "cls-muqesubx",
+      "avatar": "CK",
+      "created_at": "2026-10-02T03:34:21.204Z"
+    },
+    {
+      "id": "usr-student-muqflzt4",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "password_hash": "$2a$10$eAPs94jhsAcciyWwI3gDf.VEC1fNNdc9.rVbUK3XY/aD18lBJteDG",
+      "role": "student",
+      "nip_or_nis": "10250",
+      "class_id": "cls-muqflzt1",
+      "avatar": "BP",
+      "created_at": "2026-10-02T03:57:01.257Z"
+    },
+    {
+      "id": "usr-student-muqflzux",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "password_hash": "$2a$10$T3D/UB8658G/OGUsorIZVueOgSEE8.rQ0O3LqYqrimtajO.pfaT2S",
+      "role": "student",
+      "nip_or_nis": "10251",
+      "class_id": "cls-muqflzt1",
+      "avatar": "CK",
+      "created_at": "2026-10-02T03:57:01.322Z"
+    }
+  ],
+  "classes": [
+    {
+      "id": "cls-x1",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-1",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Kelas Kimia Dasar & Terapan Fase E SMA",
+      "status": "active",
+      "student_count": 2,
+      "created_at": "2026-09-01T08:30:00Z"
+    },
+    {
+      "id": "cls-muqcwerj",
+      "status": "active",
+      "student_count": 2,
+      "created_at": "2026-10-02T02:41:08.287Z",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-2",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Kelas Paralel Kimia Fase E"
+    },
+    {
+      "id": "cls-muqd9qb4",
+      "status": "active",
+      "student_count": 1,
+      "created_at": "2026-10-02T02:51:29.776Z",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-1",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Fase E"
+    },
+    {
+      "id": "cls-muqesubx",
+      "status": "active",
+      "student_count": 2,
+      "created_at": "2026-10-02T03:34:21.069Z",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-2",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Kelas Paralel Kimia Fase E"
+    },
+    {
+      "id": "cls-muqflzt1",
+      "status": "active",
+      "student_count": 2,
+      "created_at": "2026-10-02T03:57:01.189Z",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-2",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Kelas Paralel Kimia Fase E"
+    }
+  ],
+  "students": [
+    {
+      "id": "std-1",
+      "user_id": "usr-student-1",
+      "class_id": "cls-x1",
+      "nis": "10241",
+      "name": "Ahmad Fauzi",
+      "email": "siswa@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 65,
+      "created_at": "2026-09-02T08:00:00Z"
+    },
+    {
+      "id": "std-2",
+      "user_id": "usr-student-2",
+      "class_id": "cls-x1",
+      "nis": "10242",
+      "name": "Siti Nurhaliza",
+      "email": "siti@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 95,
+      "created_at": "2026-09-02T08:00:00Z"
+    },
+    {
+      "id": "std-muqcwett",
+      "user_id": "usr-student-muqcwero",
+      "class_id": "cls-muqcwerj",
+      "nis": "10250",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T02:41:08.369Z"
+    },
+    {
+      "id": "std-muqcwevz",
+      "user_id": "usr-student-muqcwetu",
+      "class_id": "cls-muqcwerj",
+      "nis": "10251",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T02:41:08.447Z"
+    },
+    {
+      "id": "std-muqda2br",
+      "user_id": "usr-student-muqda28l",
+      "class_id": "cls-muqd9qb4",
+      "nis": "12345",
+      "name": "kholiq",
+      "email": "12345@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T02:51:45.351Z"
+    },
+    {
+      "id": "std-muqesudw",
+      "user_id": "usr-student-muqesuc3",
+      "class_id": "cls-muqesubx",
+      "nis": "10250",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T03:34:21.140Z"
+    },
+    {
+      "id": "std-muqesufo",
+      "user_id": "usr-student-muqesudw",
+      "class_id": "cls-muqesubx",
+      "nis": "10251",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T03:34:21.204Z"
+    },
+    {
+      "id": "std-muqflzux",
+      "user_id": "usr-student-muqflzt4",
+      "class_id": "cls-muqflzt1",
+      "nis": "10250",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T03:57:01.257Z"
+    },
+    {
+      "id": "std-muqflzwq",
+      "user_id": "usr-student-muqflzux",
+      "class_id": "cls-muqflzt1",
+      "nis": "10251",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T03:57:01.322Z"
+    }
+  ],
+  "lkpd": [
+    {
+      "id": "lkpd-1",
+      "teacher_id": "usr-teacher-1",
+      "title": "Prinsip Kimia Hijau dalam Kehidupan Sehari-hari",
+      "subject": "Kimia",
+      "grade": "X",
+      "status": "published",
+      "objectives": [
+        "Mengidentifikasi 12 prinsip kimia hijau dalam aktivitas sehari-hari",
+        "Menganalisis dampak reaksi kimia konvensional terhadap lingkungan",
+        "Merancang solusi alternatif berbasis prinsip ramah lingkungan"
+      ],
+      "created_at": "2026-09-10T10:00:00Z"
+    },
+    {
+      "id": "lkpd-muqcwew9",
+      "status": "draft",
+      "created_at": "2026-10-02T02:41:08.457Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    },
+    {
+      "id": "lkpd-muqcwewe",
+      "status": "draft",
+      "created_at": "2026-10-02T02:41:08.457Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi (Salinan)",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    },
+    {
+      "id": "lkpd-muqda9hs",
+      "status": "draft",
+      "created_at": "2026-09-10T10:00:00Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "Prinsip Kimia Hijau dalam Kehidupan Sehari-hari (Salinan)",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Mengidentifikasi 12 prinsip kimia hijau dalam aktivitas sehari-hari",
+        "Menganalisis dampak reaksi kimia konvensional terhadap lingkungan",
+        "Merancang solusi alternatif berbasis prinsip ramah lingkungan"
+      ],
+      "trigger_questions": "",
+      "instructions": "",
+      "material_text": "",
+      "material_links": [
+        {
+          "title": "",
+          "url": "",
+          "type": "Web / Modul"
+        }
+      ],
+      "activities": [
+        {
+          "id": "act-1",
+          "title": "Aktivitas Utama",
+          "instructions": ""
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-1",
+          "type": "essay",
+          "prompt": ""
+        }
+      ],
+      "reflection_prompts": [],
+      "updated_at": "2026-10-02T02:52:13.148Z"
+    },
+    {
+      "id": "lkpd-muqesuft",
+      "status": "draft",
+      "created_at": "2026-10-02T03:34:21.209Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    },
+    {
+      "id": "lkpd-muqesufu",
+      "status": "published",
+      "created_at": "2026-10-02T03:34:21.209Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi (Salinan)",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ],
+      "updated_at": "2026-10-02T03:39:14.024Z"
+    },
+    {
+      "id": "lkpd-muqflzwu",
+      "status": "draft",
+      "created_at": "2026-10-02T03:57:01.326Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    },
+    {
+      "id": "lkpd-muqflzww",
+      "status": "draft",
+      "created_at": "2026-10-02T03:57:01.326Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi (Salinan)",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    }
+  ],
+  "assignments": [
+    {
+      "id": "asg-1",
+      "lkpd_id": "lkpd-1",
+      "class_id": "cls-x1",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD 1: Eksplorasi Kimia Hijau",
+      "subject": "Kimia",
+      "class_name": "X-1",
+      "start_date": "2026-10-01T08:00:00Z",
+      "due_date": "2026-10-12T23:59:00Z",
+      "instructions": "Kerjakan seluruh 6 tahapan navigasi LKPD secara bertahap. Pastikan refleksi diisi sebelum submit.",
+      "status": "active",
+      "created_at": "2026-10-01T08:00:00Z"
+    },
+    {
+      "id": "asg-muqcwewj",
+      "status": "active",
+      "class_name": "X-2",
+      "created_at": "2026-10-02T02:41:08.467Z",
+      "lkpd_id": "lkpd-muqcwew9",
+      "class_id": "cls-muqcwerj",
+      "teacher_id": "usr-teacher-1",
+      "title": "Tugas Bab Stoikiometri",
+      "subject": "Kimia",
+      "start_date": "2026-10-02T02:41:08.467Z",
+      "due_date": "2026-10-20T23:59:00Z",
+      "instructions": "Kerjakan secara cermat."
+    },
+    {
+      "id": "asg-muqesufw",
+      "status": "active",
+      "class_name": "X-2",
+      "created_at": "2026-10-02T03:34:21.212Z",
+      "lkpd_id": "lkpd-muqesuft",
+      "class_id": "cls-muqesubx",
+      "teacher_id": "usr-teacher-1",
+      "title": "Tugas Bab Stoikiometri",
+      "subject": "Kimia",
+      "start_date": "2026-10-02T03:34:21.212Z",
+      "due_date": "2026-10-20T23:59:00Z",
+      "instructions": "Kerjakan secara cermat."
+    },
+    {
+      "id": "asg-muqez4d3",
+      "status": "active",
+      "class_name": "X-1",
+      "created_at": "2026-10-02T03:39:14.007Z",
+      "lkpd_id": "lkpd-muqesufu",
+      "class_id": "cls-x1",
+      "teacher_id": "usr-teacher-1",
+      "title": "Tugas: LKPD Stoikiometri Reaksi (Salinan)",
+      "subject": "Kimia",
+      "start_date": "2026-10-02T03:39:14.006Z",
+      "due_date": "2026-10-12T23:59",
+      "instructions": "Kerjakan tugas sesuai tahapan pada LKPD."
+    },
+    {
+      "id": "asg-muqflzwy",
+      "status": "active",
+      "class_name": "X-2",
+      "created_at": "2026-10-02T03:57:01.330Z",
+      "lkpd_id": "lkpd-muqflzwu",
+      "class_id": "cls-muqflzt1",
+      "teacher_id": "usr-teacher-1",
+      "title": "Tugas Bab Stoikiometri",
+      "subject": "Kimia",
+      "start_date": "2026-10-02T03:57:01.330Z",
+      "due_date": "2026-10-20T23:59:00Z",
+      "instructions": "Kerjakan secara cermat."
+    }
+  ],
+  "submissions": [
+    {
+      "id": "sub-1",
+      "assignment_id": "asg-1",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "status": "graded",
+      "submitted_at": "2026-10-02T02:48:21.050Z",
+      "answers": {
+        "identitas": {
+          "nama": "Ahmad Fauzi",
+          "nis": "10241",
+          "kelas": "X-1"
+        },
+        "aktivitas": "Analisis penggunaan katalis dan pelarut air pada industri sintesis obat",
+        "pertanyaan": "Prinsip ke-5 dan ke-7 kimia hijau diaplikasikan melalui pemilihan pelarut non-B3",
+        "refleksi": "Saya memahami konsep pencegahan limbah namun masih ragu cara menghitung efisiensi atom",
+        "identity": {
+          "nama": "Ahmad Fauzi",
+          "nis": "10241",
+          "kelas": "X-1"
+        },
+        "activity1": "",
+        "activity2": "",
+        "q1": 0,
+        "q2": "",
+        "reflection": ""
+      },
+      "score": 85,
+      "feedback": "Jawaban telah menunjukkan penalaran kritis yang baik. Perhatikan ketelitian rumus pada bagian stoikiometri.",
+      "graded_at": "2026-10-02T02:48:50.543Z",
+      "strengths": [
+        "Pemahaman konsep pelarut hijau sangat baik",
+        "Struktur jawaban sistematis"
+      ],
+      "weaknesses": [
+        "Kalkulasi atom economy perlu diperjelas satuannya"
+      ],
+      "misconceptions": []
+    },
+    {
+      "id": "sub-2",
+      "assignment_id": "asg-1",
+      "student_id": "usr-student-2",
+      "student_name": "Siti Nurhaliza",
+      "status": "graded",
+      "submitted_at": "2026-10-01T15:20:00Z",
+      "answers": {
+        "identitas": {
+          "nama": "Siti Nurhaliza",
+          "nis": "10242",
+          "kelas": "X-1"
+        },
+        "aktivitas": "Desain proses degradasi bioplastik berbasis pati singkong",
+        "pertanyaan": "Penggunaan bahan baku terbarukan memenuhi prinsip ke-7",
+        "refleksi": "Pembelajaran sangat jelas dan aplikatif"
+      },
+      "score": 85,
+      "feedback": "Jawaban telah menunjukkan penalaran kritis yang baik. Perhatikan ketelitian rumus pada bagian stoikiometri.",
+      "graded_at": "2026-10-02T02:50:39.628Z",
+      "strengths": [
+        "Pemahaman konsep pelarut hijau sangat baik",
+        "Struktur jawaban sistematis"
+      ],
+      "weaknesses": [
+        "Kalkulasi atom economy perlu diperjelas satuannya"
+      ],
+      "misconceptions": []
+    },
+    {
+      "id": "sub-muqcwewo",
+      "assignment_id": "asg-muqcwewj",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "student_nis": "10241",
+      "status": "graded",
+      "answers": {
+        "activity1": "Analisis massa gas oksigen",
+        "q2": "Hukum kekekalan massa Lavoisier berlaku pada sistem tertutup",
+        "reflection": "Materi stoikiometri sangat terstruktur"
+      },
+      "submitted_at": "2026-10-02T02:41:08.474Z",
+      "score": 85,
+      "feedback": "Jawaban Anda telah menunjukkan penalaran yang baik mengenai prinsip kimia hijau.",
+      "graded_at": "2026-10-02T02:48:58.618Z",
+      "created_at": "2026-10-02T02:41:08.472Z",
+      "strengths": [
+        "Pemahaman konsep pelarut hijau sangat baik",
+        "Struktur jawaban sistematis"
+      ],
+      "weaknesses": [
+        "Kalkulasi atom economy perlu diperjelas satuannya"
+      ],
+      "misconceptions": []
+    },
+    {
+      "id": "sub-muqesufy",
+      "assignment_id": "asg-muqesufw",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "student_nis": "10241",
+      "status": "submitted",
+      "answers": {
+        "activity1": "Analisis massa gas oksigen",
+        "q2": "Hukum kekekalan massa Lavoisier berlaku pada sistem tertutup",
+        "reflection": "Materi stoikiometri sangat terstruktur"
+      },
+      "submitted_at": "2026-10-02T03:34:21.216Z",
+      "score": null,
+      "feedback": null,
+      "graded_at": null,
+      "created_at": "2026-10-02T03:34:21.214Z"
+    },
+    {
+      "id": "sub-muqezyyf",
+      "assignment_id": "asg-muqez4d3",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "student_nis": "10241",
+      "status": "submitted",
+      "answers": {
+        "identity": {
+          "nama": "Ahmad Fauzi",
+          "nis": "10241",
+          "kelas": "X-1"
+        },
+        "activity1": "",
+        "activity2": "",
+        "q1": 2,
+        "q2": "",
+        "reflection": ""
+      },
+      "submitted_at": "2026-10-02T03:40:03.288Z",
+      "score": null,
+      "feedback": null,
+      "graded_at": null,
+      "created_at": "2026-10-02T03:39:53.655Z"
+    },
+    {
+      "id": "sub-muqflzx0",
+      "assignment_id": "asg-muqflzwy",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "student_nis": "10241",
+      "status": "submitted",
+      "answers": {
+        "activity1": "Analisis massa gas oksigen",
+        "q2": "Hukum kekekalan massa Lavoisier berlaku pada sistem tertutup",
+        "reflection": "Materi stoikiometri sangat terstruktur"
+      },
+      "submitted_at": "2026-10-02T03:57:01.334Z",
+      "score": null,
+      "feedback": null,
+      "graded_at": null,
+      "created_at": "2026-10-02T03:57:01.332Z"
+    }
+  ],
+  "followups": [
+    {
+      "id": "flw-1",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "teacher_id": "usr-teacher-1",
+      "subject": "Kimia",
+      "topic": "Konfigurasi Elektron & Reaksi Hijau",
+      "problem": "Perhitungan efisiensi atom dan elektron valensi unsur transisi",
+      "recommendations": [
+        "Buka materi penguatan: Modul 3 Sintesis Atom Hemat Energi",
+        "Kerjakan latihan kalkulasi Atom Economy",
+        "Selesaikan refleksi mandiri"
+      ],
+      "progress": 100,
+      "status": "completed",
+      "created_at": "2026-10-01T19:00:00Z"
+    },
+    {
+      "id": "flw-muqd6sy3",
+      "student_name": "Ahmad Fauzi",
+      "status": "completed",
+      "progress": 100,
+      "created_at": "2026-10-02T02:49:13.227Z",
+      "teacher_id": "usr-teacher-1",
+      "student_id": "usr-student-1",
+      "assignment_id": null,
+      "subject": "Kimia",
+      "topic": "Perhitungan Efisiensi Atom & Stoikiometri",
+      "problem": "Ragu dalam membedakan rumus yield teoretis dan atom economy",
+      "recommendations": [
+        "Buka modul penguatan materi",
+        "Kerjakan kuis latihan terarah",
+        "Selesaikan refleksi mandiri"
+      ]
+    }
+  ],
+  "ai_configs": [
+    {
+      "id": "cfg-1",
+      "user_id": "usr-teacher-1",
+      "provider": "gemini",
+      "model": "gemini-1.5-pro",
+      "endpoint": "https://generativelanguage.googleapis.com",
+      "is_active": true,
+      "status": "connected",
+      "created_at": "2026-09-01T08:00:00Z"
+    }
+  ],
+  "activities": [
+    {
+      "id": "act-muqflzx2",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T03:57:01.334Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqflzwy",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"Tugas Bab Stoikiometri\" untuk Kelas X-2",
+      "timestamp": "2026-10-02T03:57:01.330Z",
+      "icon": "clipboard-list"
+    },
+    {
+      "id": "act-muqf06e0",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T03:40:03.288Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqf030u",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T03:39:58.926Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqez4d3",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"Tugas: LKPD Stoikiometri Reaksi (Salinan)\" untuk Kelas X-1",
+      "timestamp": "2026-10-02T03:39:14.007Z",
+      "icon": "clipboard-list"
+    },
+    {
+      "id": "act-muqesug0",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T03:34:21.216Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqesufw",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"Tugas Bab Stoikiometri\" untuk Kelas X-2",
+      "timestamp": "2026-10-02T03:34:21.212Z",
+      "icon": "clipboard-list"
+    },
+    {
+      "id": "act-muqd8nm4",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Penilaian Selesai",
+      "description": "Nilai 85 diberikan untuk Siti Nurhaliza",
+      "timestamp": "2026-10-02T02:50:39.628Z",
+      "icon": "award"
+    },
+    {
+      "id": "act-muqd6hoa",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Penilaian Selesai",
+      "description": "Nilai 85 diberikan untuk Ahmad Fauzi",
+      "timestamp": "2026-10-02T02:48:58.618Z",
+      "icon": "award"
+    },
+    {
+      "id": "act-muqd6bfz",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Penilaian Selesai",
+      "description": "Nilai 85 diberikan untuk Ahmad Fauzi",
+      "timestamp": "2026-10-02T02:48:50.543Z",
+      "icon": "award"
+    },
+    {
+      "id": "act-muqd5ooq",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T02:48:21.050Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqcwewq",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T02:41:08.474Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqcwewj",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"Tugas Bab Stoikiometri\" untuk Kelas X-2",
+      "timestamp": "2026-10-02T02:41:08.467Z",
+      "icon": "clipboard-list"
+    },
+    {
+      "id": "act-1",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"LKPD 1: Eksplorasi Kimia Hijau\" untuk Kelas X-1",
+      "timestamp": "2026-10-01T08:00:00Z",
+      "icon": "clipboard-list"
+    },
+    {
+      "id": "act-2",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi (X-1) telah mengumpulkan LKPD 1",
+      "timestamp": "2026-10-02T07:45:00Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-3",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Penilaian Selesai",
+      "description": "Nilai 94 diberikan untuk Siti Nurhaliza (X-1)",
+      "timestamp": "2026-10-01T18:00:00Z",
+      "icon": "award"
+    }
+  ]
+}
