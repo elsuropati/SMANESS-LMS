@@ -69,18 +69,6 @@
       "created_at": "2026-10-02T07:31:45.612Z"
     },
     {
-      "id": "usr-teacher-muqna5kk",
-      "name": "Rina Wijaya, S.Pd.",
-      "email": "rinawijaya_muqna5kj@aiclassroom.sch.id",
-      "password_hash": "$2a$10$r5K5ve7KrbIHbdw1l5JMsOPbGJAtsT5mhRfSHgH3dOUlPgV1ey3RK",
-      "role": "teacher",
-      "nip_or_nis": "199001012015012001",
-      "subject": "Fisika",
-      "avatar": "RW",
-      "status": "active",
-      "created_at": "2026-10-02T07:31:45.781Z"
-    },
-    {
       "id": "usr-student-muqnabt8",
       "name": "Bayu Pratama",
       "email": "10250@aiclassroom.sch.id",
@@ -101,18 +89,6 @@
       "class_id": "cls-muqnabt6",
       "avatar": "CK",
       "created_at": "2026-10-02T07:31:53.933Z"
-    },
-    {
-      "id": "usr-teacher-muqnabzj",
-      "name": "Rina Wijaya, S.Pd.",
-      "email": "rinawijaya_muqnabzi@aiclassroom.sch.id",
-      "password_hash": "$2a$10$c.CHe3glwmD9JN33imZ9re49UYP0ul5PyqpQ5mSJls/O0SPPz3K8K",
-      "role": "teacher",
-      "nip_or_nis": "199001012015012001",
-      "subject": "Fisika",
-      "avatar": "RW",
-      "status": "active",
-      "created_at": "2026-10-02T07:31:54.095Z"
     },
     {
       "id": "usr-student-muqnawcw",
@@ -137,16 +113,50 @@
       "created_at": "2026-10-02T07:32:20.561Z"
     },
     {
-      "id": "usr-teacher-muqnawjd",
+      "id": "usr-teacher-jp2022",
+      "name": "Janji Purwanto, S.Pd., M.Pd.",
+      "email": "janjipurwanto@gmail.com",
+      "password_hash": "$2a$10$EYdlUkRaoHYqVtCY8nnUn.0u1nB6oY355aBAxBL0M.GiXeeHjcSNq",
+      "role": "teacher",
+      "nip_or_nis": "198704072022211015",
+      "subject": "Kimia",
+      "avatar": "JP",
+      "status": "active",
+      "created_at": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": "usr-student-muqndqfn",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "password_hash": "$2a$10$uP8LTNXQ6PDDGCdQ.cLl3.hayNEYnU2ZC8tC29jjnI6X/do6Qa60i",
+      "role": "student",
+      "nip_or_nis": "10250",
+      "class_id": "cls-muqndqfk",
+      "avatar": "BP",
+      "created_at": "2026-10-02T07:34:32.787Z"
+    },
+    {
+      "id": "usr-student-muqndqhg",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "password_hash": "$2a$10$6JuxkxIwKvNKCf8xzx2zZOfBtBzjukicvpsxUufYnsL.woHmtnPOS",
+      "role": "student",
+      "nip_or_nis": "10251",
+      "class_id": "cls-muqndqfk",
+      "avatar": "CK",
+      "created_at": "2026-10-02T07:34:32.852Z"
+    },
+    {
+      "id": "usr-teacher-muqndqlz",
       "name": "Rina Wijaya, S.Pd.",
-      "email": "rinawijaya_muqnawjc@aiclassroom.sch.id",
-      "password_hash": "$2a$10$.7Bctgg1htczFXmfgg7SAehVkmGZ4VvAo4zfAKDOomjK62VeILNMi",
+      "email": "rinawijaya_muqndqly@aiclassroom.sch.id",
+      "password_hash": "$2a$10$iKH/u.TVZo9nNzCAS9DZnuKWEC9DoO.CSyWfFRiYVWc3Bcq6BIgMO",
       "role": "teacher",
       "nip_or_nis": "199001012015012001",
       "subject": "Fisika",
       "avatar": "RW",
       "status": "active",
-      "created_at": "2026-10-02T07:32:20.729Z"
+      "created_at": "2026-10-02T07:34:33.015Z"
     }
   ],
   "classes": [
@@ -188,6 +198,17 @@
       "status": "active",
       "student_count": 2,
       "created_at": "2026-10-02T07:32:20.429Z",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-2",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Kelas Paralel Kimia Fase E"
+    },
+    {
+      "id": "cls-muqndqfk",
+      "status": "active",
+      "student_count": 2,
+      "created_at": "2026-10-02T07:34:32.720Z",
       "teacher_id": "usr-teacher-1",
       "name": "X-2",
       "subject": "Kimia",
@@ -283,6 +304,28 @@
       "status": "active",
       "progress": 0,
       "created_at": "2026-10-02T07:32:20.561Z"
+    },
+    {
+      "id": "std-muqndqhf",
+      "user_id": "usr-student-muqndqfn",
+      "class_id": "cls-muqndqfk",
+      "nis": "10250",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T07:34:32.787Z"
+    },
+    {
+      "id": "std-muqndqj8",
+      "user_id": "usr-student-muqndqhg",
+      "class_id": "cls-muqndqfk",
+      "nis": "10251",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T07:34:32.852Z"
     }
   ],
   "lkpd": [
@@ -398,6 +441,30 @@
       "objectives": [
         "Menghitung mol reaktan"
       ]
+    },
+    {
+      "id": "lkpd-muqndqjc",
+      "status": "draft",
+      "created_at": "2026-10-02T07:34:32.856Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    },
+    {
+      "id": "lkpd-muqndqje",
+      "status": "draft",
+      "created_at": "2026-10-02T07:34:32.856Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi (Salinan)",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
     }
   ],
   "assignments": [
@@ -454,6 +521,20 @@
       "title": "Tugas Bab Stoikiometri",
       "subject": "Kimia",
       "start_date": "2026-10-02T07:32:20.569Z",
+      "due_date": "2026-10-20T23:59:00Z",
+      "instructions": "Kerjakan secara cermat."
+    },
+    {
+      "id": "asg-muqndqjg",
+      "status": "active",
+      "class_name": "X-2",
+      "created_at": "2026-10-02T07:34:32.860Z",
+      "lkpd_id": "lkpd-muqndqjc",
+      "class_id": "cls-muqndqfk",
+      "teacher_id": "usr-teacher-1",
+      "title": "Tugas Bab Stoikiometri",
+      "subject": "Kimia",
+      "start_date": "2026-10-02T07:34:32.860Z",
       "due_date": "2026-10-20T23:59:00Z",
       "instructions": "Kerjakan secara cermat."
     }
@@ -531,10 +612,46 @@
       "feedback": null,
       "graded_at": null,
       "created_at": "2026-10-02T07:32:20.571Z"
+    },
+    {
+      "id": "sub-muqndqji",
+      "assignment_id": "asg-muqndqjg",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "student_nis": "10241",
+      "status": "submitted",
+      "answers": {
+        "activity1": "Analisis massa gas oksigen",
+        "q2": "Hukum kekekalan massa Lavoisier berlaku pada sistem tertutup",
+        "reflection": "Materi stoikiometri sangat terstruktur"
+      },
+      "submitted_at": "2026-10-02T07:34:32.863Z",
+      "score": null,
+      "feedback": null,
+      "graded_at": null,
+      "created_at": "2026-10-02T07:34:32.862Z"
     }
   ],
   "followups": [],
   "activities": [
+    {
+      "id": "act-muqndqjj",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T07:34:32.863Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqndqjg",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"Tugas Bab Stoikiometri\" untuk Kelas X-2",
+      "timestamp": "2026-10-02T07:34:32.860Z",
+      "icon": "clipboard-list"
+    },
     {
       "id": "act-muqnawgt",
       "user_id": "usr-student-1",
