@@ -8,9 +8,15 @@ export async function renderGradingView(container, { user, showToast }) {
           <h1>Penilaian & Analisis Ulasan</h1>
           <p>Periksa hasil kerja siswa, gunakan evaluasi AI untuk rekomendasi rubrik, dan berikan umpan balik terarah.</p>
         </div>
-        <div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn-demo-pill" id="btn-export-grades-excel" style="background: #ecfdf5; border-color: #a7f3d0; color: #065f46; font-weight: 700; padding: 8px 16px;">
+            <span>📊 Unduh Excel Nilai (.csv)</span>
+          </button>
+          <button class="btn-demo-pill" id="btn-print-grades" style="padding: 8px 16px;">
+            <span>🖨️ Cetak Nilai</span>
+          </button>
           <button class="btn-demo-pill" id="btn-refresh-grading" style="padding: 8px 16px;">
-            <span>🔄 Segarkan Pengumpulan</span>
+            <span>🔄 Segarkan</span>
           </button>
         </div>
       </div>
@@ -294,6 +300,20 @@ export async function renderGradingView(container, { user, showToast }) {
       }
     });
   }
+
+  container.querySelector('#btn-export-grades-excel').addEventListener('click', async () => {
+    try {
+      showToast('Menyiapkan berkas Excel rekap nilai siswa...', 'info');
+      await api.exportGradesExcel();
+      showToast('Berkas Excel nilai berhasil diunduh!', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  });
+
+  container.querySelector('#btn-print-grades').addEventListener('click', () => {
+    window.print();
+  });
 
   container.querySelector('#btn-refresh-grading').addEventListener('click', () => {
     loadSubmissions();

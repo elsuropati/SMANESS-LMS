@@ -262,7 +262,19 @@ async function runTests() {
     assert.strictEqual(testRes.body.success, true);
   });
 
-  // 11. Class Analytics Report
+  // 11. Excel Export
+  await test('Teacher can export student grades as Excel/CSV', async () => {
+    const res = await request(app, {
+      path: '/api/grades/export-excel',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    assert.strictEqual(res.status, 200);
+    assert.ok(res.body.includes('REKAPITULASI NILAI SISWA'));
+    assert.ok(res.body.includes('Catatan Umpan Balik Guru'));
+  });
+
+  // 12. Class Analytics Report
   await test('Class analytics returns average, mastery rate, and difficult topics', async () => {
     const reportRes = await request(app, {
       path: '/api/reports/class-analytics',

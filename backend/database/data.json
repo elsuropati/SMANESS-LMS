@@ -109,6 +109,28 @@
       "class_id": "cls-muqflzt1",
       "avatar": "CK",
       "created_at": "2026-10-02T03:57:01.322Z"
+    },
+    {
+      "id": "usr-student-muqg6s9s",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "password_hash": "$2a$10$xKexqAPJGBgoNAOTD56v6.dDIOviDSpVYhEVOQsRBy/uOZNavGA8G",
+      "role": "student",
+      "nip_or_nis": "10250",
+      "class_id": "cls-muqg6s9q",
+      "avatar": "BP",
+      "created_at": "2026-10-02T04:13:11.265Z"
+    },
+    {
+      "id": "usr-student-muqg6sbo",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "password_hash": "$2a$10$i8f4.gp.VsvI0I20S6LGAuGmi.oBPn9C5DX8bgz60GUbURT3JRg0q",
+      "role": "student",
+      "nip_or_nis": "10251",
+      "class_id": "cls-muqg6s9q",
+      "avatar": "CK",
+      "created_at": "2026-10-02T04:13:11.335Z"
     }
   ],
   "classes": [
@@ -161,6 +183,17 @@
       "status": "active",
       "student_count": 2,
       "created_at": "2026-10-02T03:57:01.189Z",
+      "teacher_id": "usr-teacher-1",
+      "name": "X-2",
+      "subject": "Kimia",
+      "academic_year": "2026/2027",
+      "description": "Kelas Paralel Kimia Fase E"
+    },
+    {
+      "id": "cls-muqg6s9q",
+      "status": "active",
+      "student_count": 2,
+      "created_at": "2026-10-02T04:13:11.198Z",
       "teacher_id": "usr-teacher-1",
       "name": "X-2",
       "subject": "Kimia",
@@ -267,6 +300,28 @@
       "status": "active",
       "progress": 0,
       "created_at": "2026-10-02T03:57:01.322Z"
+    },
+    {
+      "id": "std-muqg6sbl",
+      "user_id": "usr-student-muqg6s9s",
+      "class_id": "cls-muqg6s9q",
+      "nis": "10250",
+      "name": "Bayu Pratama",
+      "email": "10250@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T04:13:11.265Z"
+    },
+    {
+      "id": "std-muqg6sdj",
+      "user_id": "usr-student-muqg6sbo",
+      "class_id": "cls-muqg6s9q",
+      "nis": "10251",
+      "name": "Citra Kirana",
+      "email": "citra@aiclassroom.sch.id",
+      "status": "active",
+      "progress": 0,
+      "created_at": "2026-10-02T04:13:11.335Z"
     }
   ],
   "lkpd": [
@@ -396,6 +451,30 @@
       "objectives": [
         "Menghitung mol reaktan"
       ]
+    },
+    {
+      "id": "lkpd-muqg6sdo",
+      "status": "draft",
+      "created_at": "2026-10-02T04:13:11.340Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
+    },
+    {
+      "id": "lkpd-muqg6sdq",
+      "status": "draft",
+      "created_at": "2026-10-02T04:13:11.340Z",
+      "teacher_id": "usr-teacher-1",
+      "title": "LKPD Stoikiometri Reaksi (Salinan)",
+      "subject": "Kimia",
+      "grade": "X",
+      "objectives": [
+        "Menghitung mol reaktan"
+      ]
     }
   ],
   "assignments": [
@@ -466,6 +545,20 @@
       "title": "Tugas Bab Stoikiometri",
       "subject": "Kimia",
       "start_date": "2026-10-02T03:57:01.330Z",
+      "due_date": "2026-10-20T23:59:00Z",
+      "instructions": "Kerjakan secara cermat."
+    },
+    {
+      "id": "asg-muqg6sdx",
+      "status": "active",
+      "class_name": "X-2",
+      "created_at": "2026-10-02T04:13:11.350Z",
+      "lkpd_id": "lkpd-muqg6sdo",
+      "class_id": "cls-muqg6s9q",
+      "teacher_id": "usr-teacher-1",
+      "title": "Tugas Bab Stoikiometri",
+      "subject": "Kimia",
+      "start_date": "2026-10-02T04:13:11.349Z",
       "due_date": "2026-10-20T23:59:00Z",
       "instructions": "Kerjakan secara cermat."
     }
@@ -625,6 +718,24 @@
       "feedback": null,
       "graded_at": null,
       "created_at": "2026-10-02T03:57:01.332Z"
+    },
+    {
+      "id": "sub-muqg6se1",
+      "assignment_id": "asg-muqg6sdx",
+      "student_id": "usr-student-1",
+      "student_name": "Ahmad Fauzi",
+      "student_nis": "10241",
+      "status": "submitted",
+      "answers": {
+        "activity1": "Analisis massa gas oksigen",
+        "q2": "Hukum kekekalan massa Lavoisier berlaku pada sistem tertutup",
+        "reflection": "Materi stoikiometri sangat terstruktur"
+      },
+      "submitted_at": "2026-10-02T04:13:11.356Z",
+      "score": null,
+      "feedback": null,
+      "graded_at": null,
+      "created_at": "2026-10-02T04:13:11.353Z"
     }
   ],
   "followups": [
@@ -677,6 +788,24 @@
     }
   ],
   "activities": [
+    {
+      "id": "act-muqg6se4",
+      "user_id": "usr-student-1",
+      "role": "student",
+      "title": "Pengumpulan Tugas Baru",
+      "description": "Ahmad Fauzi telah mengumpulkan tugas.",
+      "timestamp": "2026-10-02T04:13:11.356Z",
+      "icon": "check-circle"
+    },
+    {
+      "id": "act-muqg6sdy",
+      "user_id": "usr-teacher-1",
+      "role": "teacher",
+      "title": "Tugas Baru Diterbitkan",
+      "description": "Menugaskan \"Tugas Bab Stoikiometri\" untuk Kelas X-2",
+      "timestamp": "2026-10-02T04:13:11.350Z",
+      "icon": "clipboard-list"
+    },
     {
       "id": "act-muqflzx2",
       "user_id": "usr-student-1",

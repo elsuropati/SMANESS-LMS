@@ -94,6 +94,23 @@ export const api = {
   getAiConfig: () => apiRequest('/api/ai/config'),
   saveAiConfig: (config) => apiRequest('/api/ai/config', { method: 'POST', body: JSON.stringify(config) }),
 
+  exportGradesExcel: async () => {
+    const state = getState();
+    const headers = {};
+    if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
+    const res = await fetch('/api/grades/export-excel', { headers });
+    if (!res.ok) throw new Error('Gagal mengunduh file rekap nilai.');
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Rekap_Nilai_AI_Classroom_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  },
+
   // Reports
   getClassAnalytics: () => apiRequest('/api/reports/class-analytics')
 };

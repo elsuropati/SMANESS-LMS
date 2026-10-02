@@ -8,9 +8,12 @@ export async function renderReportsView(container, { user, showToast }) {
           <h1>Laporan & Analisis Hasil Pembelajaran</h1>
           <p>Pantau ketuntasan kurikulum, evaluasi distribusi nilai, dan identifikasi materi yang memerlukan remidiasi.</p>
         </div>
-        <div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn-demo-pill" id="btn-export-grades-excel-report" style="background: #ecfdf5; border-color: #a7f3d0; color: #065f46; font-weight: 700; padding: 8px 16px;">
+            <span>📊 Unduh Excel Nilai (.csv)</span>
+          </button>
           <button class="btn-demo-pill" id="btn-export-report" style="padding: 8px 16px;">
-            <span>📥 Cetak / Unduh Laporan</span>
+            <span>🖨️ Cetak Dokumen</span>
           </button>
         </div>
       </div>
@@ -175,6 +178,16 @@ export async function renderReportsView(container, { user, showToast }) {
       loading.innerHTML = `<div class="alert-box alert-error">⚠️ Gagal memuat laporan: ${err.message}</div>`;
     }
   }
+
+  container.querySelector('#btn-export-grades-excel-report').addEventListener('click', async () => {
+    try {
+      showToast('Menyiapkan berkas Excel rekap nilai siswa...', 'info');
+      await api.exportGradesExcel();
+      showToast('Berkas Excel rekap nilai berhasil diunduh!', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  });
 
   container.querySelector('#btn-export-report').addEventListener('click', () => {
     window.print();
