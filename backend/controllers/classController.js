@@ -106,6 +106,33 @@ class ClassController {
       return res.status(500).json({ success: false, message: 'Gagal mereset kata sandi.' });
     }
   }
+
+  deleteStudent(req, res) {
+    try {
+      const { studentId } = req.params;
+      const deleted = db.deleteStudent(studentId);
+      if (!deleted) {
+        return res.status(404).json({ success: false, message: 'Siswa tidak ditemukan.' });
+      }
+      return res.status(200).json({ success: true, message: 'Data siswa berhasil dihapus.' });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: 'Gagal menghapus data siswa.' });
+    }
+  }
+
+  deleteClass(req, res) {
+    try {
+      const { classId } = req.params;
+      const deleted = db.deleteClass(classId, req.user.id);
+      if (!deleted) {
+        return res.status(404).json({ success: false, message: 'Kelas tidak ditemukan.' });
+      }
+      return res.status(200).json({ success: true, message: 'Kelas berhasil dihapus.' });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: 'Gagal menghapus kelas.' });
+    }
+  }
 }
 
 module.exports = new ClassController();
+

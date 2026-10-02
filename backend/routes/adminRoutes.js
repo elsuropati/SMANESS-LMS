@@ -11,5 +11,7 @@ router.get('/teachers', adminController.getTeachers);
 router.post('/teachers', adminController.createTeacher);
 router.patch('/teachers/:id/status', adminController.toggleTeacherStatus);
 router.post('/teachers/:id/reset-password', adminController.resetTeacherPassword);
+router.delete('/teachers/:id', adminController.deleteTeacher);
 
 module.exports = router;
+

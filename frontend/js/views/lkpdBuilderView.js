@@ -210,6 +210,7 @@ export async function renderLkpdBuilderView(container, { user, showToast }) {
               </button>
               <button class="btn-demo-pill btn-edit-lkpd" data-id="${item.id}">✏️ Edit</button>
               <button class="btn-demo-pill btn-dup-lkpd" data-id="${item.id}">📋 Duplikasi</button>
+              <button class="btn-demo-pill btn-del-lkpd" data-id="${item.id}" data-title="${item.title}" style="border-color: var(--danger); color: var(--danger);">🗑️ Hapus</button>
             </div>
           </div>
         `;
@@ -245,6 +246,25 @@ export async function renderLkpdBuilderView(container, { user, showToast }) {
           }
         });
       });
+
+      // Delete click
+      containerEl.querySelectorAll('.btn-del-lkpd').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-id');
+          const title = btn.getAttribute('data-title');
+          if (confirm(`⚠️ Hapus permanen LKPD "${title}"?\n\nAksi ini tidak dapat dibatalkan.`)) {
+            try {
+              await api.deleteLkpd(id);
+              showToast(`LKPD "${title}" berhasil dihapus.`, 'success');
+              loadLkpdList();
+            } catch (e) {
+              showToast(e.message, 'error');
+            }
+          }
+        });
+      });
+
+
 
     } catch (err) {
       containerEl.innerHTML = `<div class="alert-box alert-error">⚠️ Gagal memuat LKPD: ${err.message}</div>`;

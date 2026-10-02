@@ -61,6 +61,20 @@ class LkpdController {
       return res.status(500).json({ success: false, message: 'Gagal menduplikasi LKPD.' });
     }
   }
+
+  deleteLkpd(req, res) {
+    try {
+      const { id } = req.params;
+      const deleted = db.deleteLkpd(id, req.user.id);
+      if (!deleted) {
+        return res.status(404).json({ success: false, message: 'LKPD tidak ditemukan.' });
+      }
+      return res.status(200).json({ success: true, message: 'LKPD berhasil dihapus.' });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: 'Gagal menghapus LKPD.' });
+    }
+  }
 }
 
 module.exports = new LkpdController();
+

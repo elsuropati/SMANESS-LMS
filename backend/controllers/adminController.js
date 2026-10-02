@@ -79,6 +79,20 @@ class AdminController {
       return res.status(500).json({ success: false, message: 'Gagal mereset kata sandi.' });
     }
   }
+
+  deleteTeacher(req, res) {
+    try {
+      const { id } = req.params;
+      const deleted = db.deleteTeacher(id);
+      if (!deleted) {
+        return res.status(404).json({ success: false, message: 'Akun guru tidak ditemukan.' });
+      }
+      return res.status(200).json({ success: true, message: 'Akun guru berhasil dihapus.' });
+    } catch (err) {
+      return res.status(500).json({ success: false, message: 'Gagal menghapus akun guru.' });
+    }
+  }
 }
+
 
 module.exports = new AdminController();

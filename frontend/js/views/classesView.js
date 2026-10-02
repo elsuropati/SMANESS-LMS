@@ -179,6 +179,9 @@ export async function renderClassesView(container, { user, showToast }) {
               <button class="btn-demo-pill btn-reset-pass" data-id="${s.id}" title="Reset kata sandi">
                 🔑 Reset
               </button>
+              <button class="btn-demo-pill btn-delete-student" data-id="${s.id}" data-name="${s.name}" title="Hapus siswa" style="border-color: var(--danger); color: var(--danger);">
+                🗑️
+              </button>
             </div>
           </td>
         </tr>
@@ -215,10 +218,28 @@ export async function renderClassesView(container, { user, showToast }) {
         });
       });
 
+      // Delete student events
+      tbody.querySelectorAll('.btn-delete-student').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const studentId = btn.getAttribute('data-id');
+          const name = btn.getAttribute('data-name');
+          if (confirm(`⚠️ Hapus permanen data siswa "${name}"?\n\nAksi ini tidak dapat dibatalkan.`)) {
+            try {
+              await api.deleteStudent(studentId);
+              showToast(`Data siswa "${name}" berhasil dihapus.`, 'success');
+              loadStudentsForClass(classId);
+            } catch (e) {
+              showToast(e.message, 'error');
+            }
+          }
+        });
+      });
+
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="7" style="color: var(--danger); text-align: center;">Gagal memuat siswa: ${err.message}</td></tr>`;
     }
   }
+
 
   // Select class change
   container.querySelector('#select-active-class').addEventListener('change', (e) => {

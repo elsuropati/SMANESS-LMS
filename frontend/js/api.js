@@ -45,6 +45,7 @@ export const api = {
   createTeacherByAdmin: (data) => apiRequest('/api/admin/teachers', { method: 'POST', body: JSON.stringify(data) }),
   toggleTeacherStatusByAdmin: (id, status) => apiRequest(`/api/admin/teachers/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
   resetTeacherPasswordByAdmin: (id) => apiRequest(`/api/admin/teachers/${id}/reset-password`, { method: 'POST' }),
+  deleteTeacherByAdmin: (id) => apiRequest(`/api/admin/teachers/${id}`, { method: 'DELETE' }),
 
   // Auth
   login: (email, password) => apiRequest('/api/auth/login', {
@@ -61,11 +62,13 @@ export const api = {
   // Classes & Students
   getClasses: () => apiRequest('/api/classes'),
   createClass: (data) => apiRequest('/api/classes', { method: 'POST', body: JSON.stringify(data) }),
+  deleteClass: (classId) => apiRequest(`/api/classes/${classId}`, { method: 'DELETE' }),
   getStudents: (classId) => apiRequest(`/api/classes/${classId}/students`),
   createStudent: (classId, data) => apiRequest(`/api/classes/${classId}/students`, { method: 'POST', body: JSON.stringify(data) }),
   importStudents: (classId, students) => apiRequest(`/api/classes/${classId}/students/import`, { method: 'POST', body: JSON.stringify({ students }) }),
   toggleStudentStatus: (studentId, status) => apiRequest(`/api/classes/students/${studentId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
   resetStudentPassword: (studentId) => apiRequest(`/api/classes/students/${studentId}/reset-password`, { method: 'POST' }),
+  deleteStudent: (studentId) => apiRequest(`/api/classes/students/${studentId}`, { method: 'DELETE' }),
 
   // LKPD
   getLkpdList: () => apiRequest('/api/lkpd'),
@@ -73,6 +76,7 @@ export const api = {
   createLkpd: (data) => apiRequest('/api/lkpd', { method: 'POST', body: JSON.stringify(data) }),
   updateLkpd: (id, data) => apiRequest(`/api/lkpd/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   duplicateLkpd: (id) => apiRequest(`/api/lkpd/${id}/duplicate`, { method: 'POST' }),
+  deleteLkpd: (id) => apiRequest(`/api/lkpd/${id}`, { method: 'DELETE' }),
 
   // Assignments
   getAssignments: () => apiRequest('/api/assignments'),

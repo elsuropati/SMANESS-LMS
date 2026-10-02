@@ -913,6 +913,49 @@ class Database {
       })
     };
   }
+
+  // =============================================
+  // DELETE METHODS
+  // =============================================
+
+  deleteTeacher(teacherId) {
+    const data = this.read();
+    const idx = data.users.findIndex(u => u.id === teacherId && u.role === 'teacher');
+    if (idx === -1) return false;
+    data.users.splice(idx, 1);
+    this.write(data);
+    return true;
+  }
+
+  deleteStudent(studentId) {
+    const data = this.read();
+    const idx = data.users.findIndex(u => u.id === studentId && u.role === 'student');
+    if (idx === -1) return false;
+    data.users.splice(idx, 1);
+    // also remove from students table if present
+    data.students = data.students.filter(s => s.user_id !== studentId && s.id !== studentId);
+    this.write(data);
+    return true;
+  }
+
+  deleteLkpd(lkpdId, teacherId) {
+    const data = this.read();
+    const idx = data.lkpd.findIndex(l => l.id === lkpdId && l.teacher_id === teacherId);
+    if (idx === -1) return false;
+    data.lkpd.splice(idx, 1);
+    this.write(data);
+    return true;
+  }
+
+  deleteClass(classId, teacherId) {
+    const data = this.read();
+    const idx = data.classes.findIndex(c => c.id === classId && c.teacher_id === teacherId);
+    if (idx === -1) return false;
+    data.classes.splice(idx, 1);
+    this.write(data);
+    return true;
+  }
 }
+
 
 module.exports = new Database();

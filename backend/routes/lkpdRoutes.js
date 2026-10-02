@@ -11,5 +11,7 @@ router.get('/:id', lkpdController.getLkpdById); // Can be viewed by student when
 router.post('/', requireRole('teacher'), lkpdController.createLkpd);
 router.put('/:id', requireRole('teacher'), lkpdController.updateLkpd);
 router.post('/:id/duplicate', requireRole('teacher'), lkpdController.duplicateLkpd);
+router.delete('/:id', requireRole('teacher'), lkpdController.deleteLkpd);
 
 module.exports = router;
+

@@ -218,6 +218,9 @@ export async function renderTeacherManagementView(container, { user, showToast }
               <button class="btn-demo-pill btn-toggle-teacher-status" data-id="${t.id}" data-status="${t.status}" title="Ubah status akun">
                 ${t.status === 'active' ? '🚫 Nonaktifkan' : '✅ Aktifkan'}
               </button>
+              <button class="btn-demo-pill btn-delete-teacher" data-id="${t.id}" data-name="${t.name}" title="Hapus akun guru" style="border-color: var(--danger); color: var(--danger);">
+                🗑️ Hapus
+              </button>
             </div>
           </td>
         </tr>
@@ -254,6 +257,24 @@ export async function renderTeacherManagementView(container, { user, showToast }
           }
         });
       });
+
+      // Delete Teacher Handler
+      tbody.querySelectorAll('.btn-delete-teacher').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-id');
+          const name = btn.getAttribute('data-name');
+          if (confirm(`⚠️ Hapus permanen akun guru "${name}"?\n\nAksi ini tidak dapat dibatalkan.`)) {
+            try {
+              const res = await api.deleteTeacherByAdmin(id);
+              showToast(res.message || `Akun guru "${name}" berhasil dihapus.`, 'success');
+              loadTeachers();
+            } catch (err) {
+              showToast(err.message, 'error');
+            }
+          }
+        });
+      });
+
 
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="7" style="color: var(--danger); text-align: center;">Gagal: ${err.message}</td></tr>`;
