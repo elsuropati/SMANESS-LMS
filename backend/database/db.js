@@ -10,265 +10,39 @@ const DB_PATH = isServerless
 
 // Default initial dataset
 const INITIAL_DATA = {
+  db_version: 2,
   users: [
     {
       id: 'usr-admin-1',
       name: 'Administrator Sekolah',
       email: 'admin@aiclassroom.sch.id',
-      password_hash: '$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.', // password123
+      password_hash: '$2a$10$RK16DaFtnsIRZGHYvG2iVO46cDntnSf3I.PExDbhKKl/eiC8U6zGW', // password123
       role: 'admin',
       nip_or_nis: '197901012005011001',
       subject: 'Administrator',
       avatar: 'AD',
       status: 'active',
-      created_at: '2026-09-01T07:00:00Z'
-    },
-    {
-      id: 'usr-teacher-1',
-      name: 'Budi Santoso, S.Pd.',
-      email: 'guru@aiclassroom.sch.id',
-      password_hash: '$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.', // password123
-      role: 'teacher',
-      nip_or_nis: '198507122010011005',
-      subject: 'Kimia',
-      avatar: 'BS',
-      created_at: '2026-09-01T08:00:00Z'
-    },
-    {
-      id: 'usr-student-1',
-      name: 'Ahmad Fauzi',
-      email: 'siswa@aiclassroom.sch.id',
-      password_hash: '$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.', // password123
-      role: 'student',
-      nip_or_nis: '10241',
-      class_id: 'cls-x1',
-      avatar: 'AF',
-      created_at: '2026-09-02T08:00:00Z'
-    },
-    {
-      id: 'usr-student-2',
-      name: 'Siti Nurhaliza',
-      email: 'siti@aiclassroom.sch.id',
-      password_hash: '$2a$10$l3LWVM9g6bSD.29uqLDpD.RpRCZPDlIdd8CYMMfvvNOWM9q/62j2.', // password123
-      role: 'student',
-      nip_or_nis: '10242',
-      class_id: 'cls-x1',
-      avatar: 'SN',
-      created_at: '2026-09-02T08:00:00Z'
+      created_at: '2026-10-02T10:00:00Z'
     }
   ],
-  classes: [
-    {
-      id: 'cls-x1',
-      teacher_id: 'usr-teacher-1',
-      name: 'X-1',
-      subject: 'Kimia',
-      academic_year: '2026/2027',
-      description: 'Kelas Kimia Dasar & Terapan Fase E SMA',
-      status: 'active',
-      student_count: 2,
-      created_at: '2026-09-01T08:30:00Z'
-    }
-  ],
-  students: [
-    {
-      id: 'std-1',
-      user_id: 'usr-student-1',
-      class_id: 'cls-x1',
-      nis: '10241',
-      name: 'Ahmad Fauzi',
-      email: 'siswa@aiclassroom.sch.id',
-      status: 'active',
-      progress: 65,
-      created_at: '2026-09-02T08:00:00Z'
-    },
-    {
-      id: 'std-2',
-      user_id: 'usr-student-2',
-      class_id: 'cls-x1',
-      nis: '10242',
-      name: 'Siti Nurhaliza',
-      email: 'siti@aiclassroom.sch.id',
-      status: 'active',
-      progress: 95,
-      created_at: '2026-09-02T08:00:00Z'
-    }
-  ],
-  lkpd: [
-    {
-      id: 'lkpd-1',
-      teacher_id: 'usr-teacher-1',
-      title: 'Prinsip Kimia Hijau dalam Kehidupan Sehari-hari',
-      subject: 'Kimia',
-      grade: 'X',
-      status: 'published',
-      objectives: [
-        'Mengidentifikasi 12 prinsip kimia hijau dalam kehidupan sehari-hari',
-        'Menganalisis dampak reaksi kimia konvensional terhadap lingkungan',
-        'Merancang solusi alternatif sintesis ramah lingkungan'
-      ],
-      trigger_questions: 'Mengapa industri modern kini beralih dari pelarut organik ke pelarut air?',
-      instructions: 'Ikuti 6 langkah pengerjaan berurutan. Simpan kemajuan Anda secara berkala.',
-      material_text: 'Kimia Hijau (Green Chemistry) adalah pendekatan kimia yang bertujuan merancang produk dan proses yang meminimalkan penggunaan serta pembentukan zat-zat berbahaya.',
-      material_links: [
-        { title: 'Modul Kimia Hijau Kemendikbud', url: 'https://repositori.kemdikbud.go.id', type: 'PDF' },
-        { title: 'Simulasi Reaksi Ramah Lingkungan', url: 'https://phet.colorado.edu', type: 'Lab Maya' }
-      ],
-      activities: [
-        {
-          id: 'act-1',
-          title: 'Aktivitas 1: Eksplorasi Pelarut Ramah Lingkungan',
-          instructions: 'Bandingkan dampak penggunaan pelarut air vs pelarut benzena pada proses sintesis.'
-        },
-        {
-          id: 'act-2',
-          title: 'Aktivitas 2: Analisis Atom Economy',
-          instructions: 'Hitung persentase efisiensi atom dari pembentukan aspirin.'
-        }
-      ],
-      questions: [
-        {
-          id: 'q-1',
-          type: 'mc',
-          prompt: 'Prinsip ke-5 kimia hijau menekankan pada penggunaan:',
-          options: ['Pelarut dan kondisi reaksi yang lebih aman', 'Pestisida sintetis', 'Suhu dan tekanan ekstrem', 'Katalis berbasis logam berat'],
-          answer_key: 0
-        },
-        {
-          id: 'q-2',
-          type: 'essay',
-          prompt: 'Jelaskan mengapa pencegahan limbah jauh lebih utama dibanding penanganan limbah setelah terbentuk!',
-          rubric: 'Menjelaskan aspek ekonomi, keselamatan ekosistem, dan entropi energi.'
-        }
-      ],
-      reflection_prompts: [
-        'Bagian materi mana yang paling relevan dengan aktivitas harian Anda?',
-        'Tantangan apa yang Anda hadapi saat mengerjakan LKPD ini?'
-      ],
-      created_at: '2026-09-10T10:00:00Z'
-    }
-  ],
-  assignments: [
-    {
-      id: 'asg-1',
-      lkpd_id: 'lkpd-1',
-      class_id: 'cls-x1',
-      teacher_id: 'usr-teacher-1',
-      title: 'LKPD 1: Eksplorasi Kimia Hijau',
-      subject: 'Kimia',
-      class_name: 'X-1',
-      start_date: '2026-10-01T08:00:00Z',
-      due_date: '2026-10-12T23:59:00Z',
-      instructions: 'Kerjakan seluruh 6 tahapan navigasi LKPD secara bertahap. Pastikan refleksi diisi sebelum submit.',
-      status: 'active',
-      created_at: '2026-10-01T08:00:00Z'
-    }
-  ],
-  submissions: [
-    {
-      id: 'sub-1',
-      assignment_id: 'asg-1',
-      student_id: 'usr-student-1',
-      student_name: 'Ahmad Fauzi',
-      student_nis: '10241',
-      status: 'submitted', // Belum dinilai guru
-      submitted_at: '2026-10-02T07:45:00Z',
-      answers: {
-        identity: { nama: 'Ahmad Fauzi', nis: '10241', kelas: 'X-1' },
-        activity1: 'Analisis pelarut air: Pelarut air tidak beracun dan mudah diolah kembali, sedangkan benzena bersifat karsinogenik.',
-        activity2: 'Atom economy reaksi sintesis ester mencapai 83.5%, menghasilkan limbah minimal.',
-        q1: 0,
-        q2: 'Pencegahan limbah lebih murah dan menghindari akumulasi racun di rantai makanan. Mengolah limbah yang terlanjur terbentuk membutuhkan energi dan biaya ekstra.',
-        reflection: 'Saya memahami konsep pencegahan limbah namun masih ragu cara menghitung efisiensi atom reaksi kompleks.'
-      },
-      score: null,
-      feedback: null,
-      graded_at: null
-    },
-    {
-      id: 'sub-2',
-      assignment_id: 'asg-1',
-      student_id: 'usr-student-2',
-      student_name: 'Siti Nurhaliza',
-      student_nis: '10242',
-      status: 'graded',
-      submitted_at: '2026-10-01T15:20:00Z',
-      answers: {
-        identity: { nama: 'Siti Nurhaliza', nis: '10242', kelas: 'X-1' },
-        activity1: 'Desain degradasi bioplastik dengan katalis asam sitrat alami.',
-        activity2: 'Perhitungan efisiensi atom 91.2%.',
-        q1: 0,
-        q2: 'Limbah yang dicegah tidak menimbulkan beban bagi biosfer dan tidak membutuhkan instalasi pengolahan air limbah (IPAL) berbiaya tinggi.',
-        reflection: 'Pembelajaran sangat jelas dan aplikatif dalam kehidupan sehari-hari.'
-      },
-      score: 94,
-      strengths: ['Analisis komprehensif', 'Perhitungan stoikiometri sangat akurat'],
-      weaknesses: ['Penjelasan grafik dampak lingkungan dapat diperdalam'],
-      feedback: 'Luar biasa! Analisis bioplastik sangat komprehensif disertai perhitungan stoikiometri yang tepat.',
-      graded_at: '2026-10-01T18:00:00Z'
-    }
-  ],
-  followups: [
-    {
-      id: 'flw-1',
-      student_id: 'usr-student-1',
-      student_name: 'Ahmad Fauzi',
-      teacher_id: 'usr-teacher-1',
-      subject: 'Kimia',
-      topic: 'Konfigurasi Elektron & Reaksi Hijau',
-      problem: 'Perhitungan efisiensi atom dan elektron valensi unsur transisi',
-      recommendations: [
-        'Buka materi penguatan: Modul 3 Sintesis Atom Hemat Energi',
-        'Kerjakan latihan kalkulasi Atom Economy',
-        'Selesaikan refleksi mandiri'
-      ],
-      progress: 35,
-      status: 'active',
-      created_at: '2026-10-01T19:00:00Z'
-    }
-  ],
-  ai_configs: [
-    {
-      id: 'cfg-1',
-      user_id: 'usr-teacher-1',
-      provider: 'gemini',
-      model: 'gemini-1.5-pro',
-      endpoint: 'https://generativelanguage.googleapis.com',
-      is_active: true,
-      status: 'connected',
-      created_at: '2026-09-01T08:00:00Z',
-      updated_at: '2026-09-01T08:00:00Z'
-    }
-  ],
+  classes: [],
+  students: [],
+  lkpd: [],
+  assignments: [],
+  submissions: [],
+  followups: [],
   activities: [
     {
-      id: 'act-1',
-      user_id: 'usr-teacher-1',
-      role: 'teacher',
-      title: 'Tugas Baru Diterbitkan',
-      description: 'Menugaskan "LKPD 1: Eksplorasi Kimia Hijau" untuk Kelas X-1',
-      timestamp: '2026-10-01T08:00:00Z',
-      icon: 'clipboard-list'
-    },
-    {
-      id: 'act-2',
-      user_id: 'usr-teacher-1',
-      role: 'teacher',
-      title: 'Pengumpulan Tugas Baru',
-      description: 'Ahmad Fauzi (X-1) telah mengumpulkan LKPD 1',
-      timestamp: '2026-10-02T07:45:00Z',
+      id: 'act-init-1',
+      user_id: 'usr-admin-1',
+      role: 'admin',
+      title: 'Sistem Diinisialisasi',
+      description: 'LMS Sekolah siap digunakan. Silakan tambahkan akun guru di menu Manajemen Guru.',
+      timestamp: '2026-10-02T10:00:00Z',
       icon: 'check-circle'
-    },
-    {
-      id: 'act-3',
-      user_id: 'usr-teacher-1',
-      role: 'teacher',
-      title: 'Penilaian Selesai',
-      description: 'Nilai 94 diberikan untuk Siti Nurhaliza (X-1)',
-      timestamp: '2026-10-01T18:00:00Z',
-      icon: 'award'
     }
-  ]
+  ],
+  ai_configs: []
 };
 
 class Database {

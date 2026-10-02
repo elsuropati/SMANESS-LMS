@@ -90,6 +90,14 @@ class CloudAdapter {
             }
           }
           if (parsed && typeof parsed === 'object' && Array.isArray(parsed.users)) {
+            // Jika ada versi database baru (misal reset data), reset ke defaultData
+            if (defaultData && defaultData.db_version && parsed.db_version !== defaultData.db_version) {
+              console.log(`🔄 [Upstash] Version upgrade detected (${parsed.db_version} -> ${defaultData.db_version}). Resetting to clean state...`);
+              await this.push(defaultData);
+              this.cache = defaultData;
+              this.lastPull = Date.now();
+              return defaultData;
+            }
             this.cache = parsed;
             this.lastPull = Date.now();
             return parsed;
@@ -109,6 +117,13 @@ class CloudAdapter {
         const col = client.db('aiclassroom').collection('app_storage');
         const doc = await col.findOne({ _id: 'classroom_data' });
         if (doc && doc.data) {
+          if (defaultData && defaultData.db_version && doc.data.db_version !== defaultData.db_version) {
+            console.log(`🔄 [MongoDB] Version upgrade detected (${doc.data.db_version} -> ${defaultData.db_version}). Resetting to clean state...`);
+            await this.push(defaultData);
+            this.cache = defaultData;
+            this.lastPull = Date.now();
+            return defaultData;
+          }
           this.cache = doc.data;
           this.lastPull = Date.now();
           return doc.data;
