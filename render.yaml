@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ai-classroom
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SHOW_DEMO_ACCOUNTS
+        value: false
+      - key: MOCK_AI
+        value: false
+      # WAJIB diisi lewat dashboard Render agar data tidak hilang saat restart/redeploy:
+      - key: MONGODB_URI
+        sync: false
+      - key: ADMIN_EMAIL
+        value: admin@aiclassroom.sch.id
+      - key: ADMIN_PASSWORD
+        sync: false
